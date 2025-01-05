@@ -1,0 +1,46 @@
+@import "all.css";
+@import "fontawesome.min.css";
+
+.error-message {
+    color: #dc3545;
+    display: none;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+}
+
+.load {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes dropBall {
+    0% { transform: translateY(-200px); }
+    70% { transform: translateY(20px); }
+    85% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes rotateBall {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
