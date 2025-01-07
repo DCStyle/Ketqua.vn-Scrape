@@ -3,7 +3,7 @@
         <div class="header">
             <div class="logo">
                 <a href="/" title="Kết quả">
-                    <img alt="trang chu ket qua" src="{{ setting('site_logo', 'https://placehold.co/126x38') }}">
+                    <img alt="trang chu ket qua" src="{{ setting('site_logo') ? Storage::url(setting('site_logo')) : 'https://placehold.co/126x38' }}">
                 </a>
             </div>
             <div class="divider"></div>
@@ -34,7 +34,7 @@
     </div>
     <nav class="nav-bar" id="sidebar-menu">
         <div class="sidebar-header">
-            <img class="mb-2" width="125" height="39" alt="logo ketquavn" src="/assets/images/logo-header.svg">
+            <img class="mb-2" width="125" height="39" alt="logo" src="{{ setting('site_logo') ? Storage::url(setting('site_logo')) : 'https://placehold.co/126x38' }}">
             <span class="txt-sub-content text-center">Trang kết quả xổ số hàng đầu Việt Nam</span>
             <div class="sidebar-close" id="close-sidebar-menu">
                 <i class="fas fa-times-circle"></i>
