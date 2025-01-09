@@ -113,7 +113,10 @@ class ContentMirrorService
                     break;
                 default:
                     if (str_starts_with($name, 'og:')) {
-                        $metadata['og_tags'][$name] = $content;
+                        // Do not take these tags: og:image, og:url, og:image:url, twitter:image
+                        if (!in_array($name, ['og:image', 'og:url', 'og:image:url', 'twitter:image'])) {
+                            $metadata['og_tags'][$name] = $content;
+                        }
                     } elseif (str_starts_with($name, 'twitter:')) {
                         $metadata['twitter_tags'][$name] = $content;
                     }
@@ -123,7 +126,10 @@ class ContentMirrorService
         // Extract canonical URL
         $canonical = $crawler->filter('link[rel="canonical"]');
         if ($canonical->count() > 0) {
-            $metadata['canonical'] = $canonical->attr('href');
+            // Replace source domain with our domain
+            $canonical->each(function (Crawler $node) {
+                $node->getNode(0)->setAttribute('href', str_replace($this->sourceDomain, env('APP_URL'), $node->attr('href')));
+            });
         }
 
         return $metadata;
