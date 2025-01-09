@@ -11,6 +11,8 @@ abstract class BaseScraper
     protected $path;
     protected $selector;
 
+    protected $metadata = null;
+
     abstract protected function getSourceUrl(): string;
     abstract protected function processResponse($content): array;
 
@@ -24,6 +26,10 @@ abstract class BaseScraper
             $this->selector,
             $this->getSourceUrl()
         );
+
+        if ($result && $result['metadata']) {
+            $this->metadata = $result['metadata'];
+        }
 
         return $result ? $this->processResponse($result['content']) : null;
     }

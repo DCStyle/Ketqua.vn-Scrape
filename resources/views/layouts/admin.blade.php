@@ -32,6 +32,10 @@
                class="block px-4 py-2 hover:bg-gray-700 {{ request()->routeIs('admin.dashboard') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-tachometer-alt mr-2"></i> Tổng quan
             </a>
+            <a href="{{ route('admin.articles.index') }}"
+               class="block px-4 py-2 hover:bg-gray-700 {{ request()->routeIs('admin.articles.*') ? 'bg-gray-700' : '' }}">
+                <i class="fas fa-newspaper mr-2"></i> Tin tức
+            </a>
             <a href="{{ route('admin.settings') }}"
                class="block px-4 py-2 hover:bg-gray-700 {{ request()->routeIs('admin.settings') ? 'bg-gray-700' : '' }}">
                 <i class="fas fa-cogs mr-2"></i> Cài đặt

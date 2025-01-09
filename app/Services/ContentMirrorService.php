@@ -53,16 +53,80 @@ class ContentMirrorService
                 throw new \Exception("Failed to fetch content: {$response->status()}");
             }
 
+            $crawler = new Crawler($response->body());
+            $metadata = $this->extractMetadata($crawler);
             $content = $this->extractContent($response->body(), $selector);
 
             return [
                 'content' => $this->processContent($content),
-                'template' => $template
+                'template' => $template,
+                'metadata' => $metadata
             ];
         } catch (\Exception $e) {
             Log::error("Request failed for {$path}: " . $e->getMessage());
             return null;
         }
+    }
+
+    private function extractMetadata(Crawler $crawler): array
+    {
+        $metadata = [
+            'title' => setting('site_name'),
+            'description' => setting('site_description'),
+            'keywords' => setting('site_keywords'),
+            'robots' => 'noindex,nofollow',
+            'og_tags' => [
+                'og:title' => setting('site_name'),
+                'og:description' => setting('site_description'),
+                'og:site_name' => setting('site_name'),
+                'og:locale' => 'vi_VN'
+            ],
+            'twitter_tags' => [
+                'twitter:card' => 'summary_large_image',
+                'twitter:creator' => 'Kết Quả Xổ Số'
+            ],
+            'canonical' => url()->current()
+        ];
+
+        // Extract title
+        $titleNode = $crawler->filter('title');
+        if ($titleNode->count() > 0) {
+            $metadata['title'] = trim($titleNode->text());
+        }
+
+        // Extract meta tags
+        $crawler->filter('meta')->each(function (Crawler $node) use (&$metadata) {
+            $name = $node->attr('name') ?? $node->attr('property');
+            $content = $node->attr('content');
+
+            if (!$name || !$content) return;
+
+            switch (strtolower($name)) {
+                case 'description':
+                    $metadata['description'] = $content;
+                    break;
+                case 'keywords':
+                    $metadata['keywords'] = $content;
+                    break;
+                case 'robots':
+                    $metadata['robots'] = $content;
+                    break;
+                default:
+                    if (str_starts_with($name, 'og:')) {
+                        $metadata['og_tags'][$name] = $content;
+                    } elseif (str_starts_with($name, 'twitter:')) {
+                        $metadata['twitter_tags'][$name] = $content;
+                    }
+            }
+        });
+
+        // Extract canonical URL
+        $canonical = $crawler->filter('link[rel="canonical"]');
+        if ($canonical->count() > 0) {
+            $metadata['canonical'] = $canonical->attr('href');
+        }
+
+        return $metadata;
     }
 
     public function getContent(string $path): ?array
@@ -114,13 +178,17 @@ class ContentMirrorService
         return $crawler->filter($selector)->html();
     }
 
-    private function processContent($content)
+    private function processContent($content): string
     {
         $ourDomain = rtrim(env('APP_URL'), '/');
 
         $crawler = new Crawler($content);
 
-        // Remove only the lottery checking form
+        $crawler->filter('div.d-flex.justify-content-center.m-b-10 a[href*="tuvi.vn"]')->each(function ($node) {
+            $node->getNode(0)->parentNode->parentNode->removeChild($node->getNode(0)->parentNode);
+        });
+
+        // Remove lottery checking form
         $crawler->filter('.br-10.table-shadow.overflow-hidden.m-b-15.bg-white')->each(function ($node) {
             try {
                 $link = $node->filter('h3 a');
@@ -128,34 +196,36 @@ class ContentMirrorService
                     $node->getNode(0)->parentNode->removeChild($node->getNode(0));
                 }
             } catch (\Exception $e) {
-                // Skip nodes that don't match our structure
+                // Skip non-matching nodes
             }
         });
 
-        // Remove existing click handlers
+        // Remove click handlers
         $crawler->filter('[onclick="loadMoreResults(this);"]')->each(function ($node) {
             $node->getNode(0)->parentNode->removeChild($node->getNode(0));
         });
 
         $content = $crawler->html();
 
-        // Fix URLs in order
+        // Fix URL formats and protocols
         $content = preg_replace(
             [
-                '#href="https?://' . preg_quote($this->sourceDomain, '#') . '/#',
-                '#href="https?://' . preg_quote($ourDomain, '#') . '/#',
+                '#(href|src)="https?://https?:?/?/#',  // Fix protocol issues
+                '#(href|src)="https?://' . preg_quote($ourDomain, '#') . '#',
+                '#(href|src)="https?://#',
                 '#(href|src)="/#'
             ],
             [
-                'href="/',
-                'href="/',
+                '$1="/',
+                '$1="',
+                '$1="',
                 '$1="/'
             ],
             $content
         );
 
-        // Replace all root URLs with our domain
-        $content = str_replace($this->sourceDomain, url($ourDomain), $content);
+        // Replace source domain with our domain
+        $content = str_replace($this->sourceDomain, $ourDomain, $content);
 
         return $content;
     }

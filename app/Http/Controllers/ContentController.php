@@ -96,11 +96,12 @@ class ContentController extends Controller
 
     private function createResponse(array $result): View
     {
-        $data = array_merge([
-            'content' => $result['content']
-        ], $result['data'] ?? []);
+        $metadata = $result['metadata'] ?? null;
 
-        return view($result['template'], $data)->withHeaders([
+        return view($result['template'], [
+            'content' => $result['content'],
+            'metadata' => $metadata
+        ])->withHeaders([
             'X-Robots-Tag' => 'noindex, nofollow',
             'Cache-Control' => 'public, max-age=300'
         ]);

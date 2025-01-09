@@ -54,6 +54,7 @@ class HistoricalResultsScraper extends BaseScraper
         return [
             'content' => $content,
             'template' => $this->template,
+            'metadata' => $this->metadata,
             'data' => [
                 'days' => $this->days,
                 'fromDate' => $this->fromDate->format('d-m-Y'),

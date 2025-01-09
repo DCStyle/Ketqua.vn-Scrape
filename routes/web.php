@@ -2,12 +2,14 @@
 
 require __DIR__.'/auth.php';
 
+use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FooterController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ContentController;
+use App\Http\Controllers\ImageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,6 +29,9 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
     // Redirect to Dashboard
     Route::redirect('/', '/admin/dashboard');
+
+    // Article Management
+    Route::resource('articles', ArticleController::class);
 
     // Settings
     Route::controller(SettingsController::class)->group(function () {
@@ -56,6 +61,13 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
         Route::delete('/delete', 'deleteFooter')->name('delete');
     });
 });
+
+// Articles
+Route::get('/tin-tuc', [App\Http\Controllers\ArticleController::class, 'index'])->name('articles.index');
+Route::get('/tin-tuc/{article:slug}', [App\Http\Controllers\ArticleController::class, 'show'])->name('articles.show');
+
+// Images
+Route::post('images/upload', [ImageController::class, 'store'])->name('images.upload');
 
 // Proxy
 Route::any('/proxy/{url}', [\App\Http\Controllers\ProxyController::class, 'handle'])->where('url', '.*');

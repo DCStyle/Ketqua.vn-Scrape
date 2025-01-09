@@ -43,3 +43,135 @@
     from { opacity: 1; }
     to { opacity: 0; }
 }
+
+
+/* Correct the display for editor content in public */
+.article-content p {
+    margin-bottom: 1.8rem;
+}
+
+/* Typography */
+.article-content {
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.8;
+}
+
+.article-content h1,
+.article-content h2,
+.article-content h3,
+.article-content h4,
+.article-content h5,
+.article-content h6 {
+    margin: 2rem 0 1rem;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+/* Lists */
+.article-content ul,
+.article-content ol {
+    margin: 1rem 0;
+    padding-left: 2rem;
+}
+
+.article-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Links */
+.article-content a {
+    color: #0056b3;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.article-content a:hover {
+    color: #003d82;
+    text-decoration: underline;
+}
+
+/* Images & Media */
+.article-content img,
+.article-content video {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin: 1.5rem 0;
+}
+
+.article-content figure {
+    margin: 1.5rem 0;
+}
+
+.article-content figcaption {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 0.5rem;
+}
+
+/* Tables */
+.article-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+}
+
+.article-content th,
+.article-content td {
+    border: 1px solid #dee2e6;
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.article-content th {
+    background: #f8f9fa;
+    font-weight: 600;
+}
+
+.article-content tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+/* Code Blocks */
+.article-content pre {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+}
+
+.article-content code {
+    font-family: Monaco, Consolas, monospace;
+    font-size: 0.9em;
+    background: #f8f9fa;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+}
+
+/* Blockquotes */
+.article-content blockquote {
+    border-left: 4px solid #0056b3;
+    margin: 1.5rem 0;
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    font-style: italic;
+    color: #555;
+}
+
+/* Responsive Tables */
+@media (max-width: 768px) {
+    .article-content table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 768px) {
+    .article-content table {
+        display: block;
+        overflow-x: auto;
+    }
+}

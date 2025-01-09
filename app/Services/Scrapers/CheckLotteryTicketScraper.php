@@ -25,7 +25,8 @@ class CheckLotteryTicketScraper extends BaseScraper
     {
         return [
             'content' => $content,
-            'template' => $this->template
+            'template' => $this->template,
+            'metadata' => $this->metadata
         ];
     }
 }
