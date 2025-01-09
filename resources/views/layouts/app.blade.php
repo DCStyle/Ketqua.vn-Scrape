@@ -47,8 +47,6 @@
     <meta name="twitter:image" content="@yield('image', setting('site_og_image', 'https://placehold.co/126'))">
     <meta name="twitter:creator" content="Kết Quả Xổ Số">
 
-    {!! seo() !!}
-
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ setting('site_favicon', 'https://placehold.co/32x32') }}">
 
@@ -59,6 +57,8 @@
 
     <link rel="stylesheet" href="https://atugatran.github.io/FontAwesome6Pro/css/all.min.css" >
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    @yield('seo')
 </head>
 <body>
 
