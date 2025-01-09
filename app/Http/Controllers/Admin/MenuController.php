@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class MenuController extends Controller
 {
@@ -30,6 +31,9 @@ class MenuController extends Controller
 
         Menu::create($validated);
 
+        // Clear menu cache
+        Cache::forget('menu_items');
+
         return redirect()->back()->with('success', 'Thêm menu thành công.');
     }
 
@@ -54,6 +58,9 @@ class MenuController extends Controller
 
         $menu->update($validated);
 
+        // Clear menu cache
+        Cache::forget('menu_items');
+
         return redirect()->back()->with('success', 'Cập nhật menu thành công.');
     }
 
@@ -74,6 +81,9 @@ class MenuController extends Controller
                 'parent_id' => $order['parent_id']
             ]);
         }
+
+        // Clear menu cache
+        Cache::forget('menu_items');
 
         return response()->json(['success' => true]);
     }
