@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    @yield('seo')
+
     @if(isset($metadata))
         <title>{{ $metadata['title'] }}</title>
 
@@ -57,8 +59,6 @@
 
     <link rel="stylesheet" href="https://atugatran.github.io/FontAwesome6Pro/css/all.min.css" >
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-
-    @yield('seo')
 </head>
 <body>
 
