@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('seo')
+    {!! seo($article->getDynamicSEOData()) !!}
+@endsection
+
 @section('content')
     <div class="articles-wrapper">
         <div class="row p-b-50 layout-margin mt-4">
