@@ -72,8 +72,8 @@ class Article extends Model
     public function getDynamicSEOData(): SEOData
     {
         return new SEOData(
-            title: $this->meta_title && $this->meta_title !== '' ? $this->meta_title : $this->name,
-            description: $this->meta_description && $this->meta_description !== '' ? $this->meta_description : $this->description,
+            title: $this->meta_title && $this->meta_title !== '' ? $this->meta_title : $this->title,
+            description: $this->meta_description && $this->meta_description !== '' ? $this->meta_description : $this->exceprt(),
             image: Storage::url($this->image)
         );
     }
