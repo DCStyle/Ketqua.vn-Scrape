@@ -44,13 +44,13 @@
         <meta property="og:locale:alternate" content="en_US">
     @endif
 
-    <meta property="og:image" content="@yield('image', setting('site_og_image', 'https://placehold.co/126'))">
+    <meta property="og:image" content="@yield('image', setting('site_og_image') ? Storage::url(setting('site_og_image')) : 'https://placehold.co/126')">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="@yield('image', setting('site_og_image', 'https://placehold.co/126'))">
+    <meta name="twitter:image" content="@yield('image', setting('site_og_image') ? Storage::url(setting('site_og_image')) : 'https://placehold.co/126')">
     <meta name="twitter:creator" content="Kết Quả Xổ Số">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ setting('site_favicon', 'https://placehold.co/32x32') }}">
+    <link rel="icon" type="image/png" href="{{ setting('site_favicon') ? Storage::url(setting('site_favicon')) : 'https://placehold.co/16' }}">
 
     <meta name="robots" content="noindex,nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1">
