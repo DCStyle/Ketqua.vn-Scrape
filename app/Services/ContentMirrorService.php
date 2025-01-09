@@ -113,12 +113,15 @@ class ContentMirrorService
                     break;
                 default:
                     if (str_starts_with($name, 'og:')) {
-                        // Do not take these tags: og:image, og:url, og:image:url, twitter:image
-                        if (!in_array($name, ['og:image', 'og:url', 'og:image:url', 'twitter:image'])) {
+                        // Do not take these tags
+                        if (!in_array($name, ['og:image', 'og:url', 'og:image:url'])) {
                             $metadata['og_tags'][$name] = $content;
                         }
                     } elseif (str_starts_with($name, 'twitter:')) {
-                        $metadata['twitter_tags'][$name] = $content;
+                        // Do not take these tags
+                        if (!in_array($name, ['twitter:image'])) {
+                            $metadata['twitter_tags'][$name] = $content;
+                        }
                     }
             }
         });
