@@ -13,6 +13,7 @@ class RssController extends Controller
             return DB::table('sitemaps')
                 ->whereNotNull('last_modified')
                 ->where('is_index', false)
+                ->where('parent_path', 'posts.xml')
                 ->orderBy('last_modified', 'desc')
                 ->limit(100)
                 ->get();
@@ -35,6 +36,7 @@ class RssController extends Controller
             return DB::table('sitemaps')
                 ->whereNotNull('last_modified')
                 ->where('is_index', false)
+                ->where('parent_path', 'posts.xml')
                 ->where('url', 'like', "%/{$category}/%")
                 ->orderBy('last_modified', 'desc')
                 ->limit(50)
