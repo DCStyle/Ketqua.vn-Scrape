@@ -12,7 +12,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('sitemap:crawl')
+            ->dailyAt('00:00')
+            ->withoutOverlapping()
+            ->runInBackground()
+            ->emailOutputOnFailure(env('ADMIN_EMAIL'));
     }
 
     /**

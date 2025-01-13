@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ContentController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\RssController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -68,6 +70,14 @@ Route::get('/tin-tuc/{article:slug}', [App\Http\Controllers\ArticleController::c
 
 // Images
 Route::post('images/upload', [ImageController::class, 'store'])->name('images.upload');
+
+// Site map
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
+Route::get('/{path}.xml', [SitemapController::class, 'show'])->where('path', '.*');
+
+// RSS feed
+Route::get('/feed', [RssController::class, 'index'])->name('rss.index');
+Route::get('/feed/{category}', [RssController::class, 'category'])->name('rss.category');
 
 // Proxy
 Route::any('/proxy/{url}', [\App\Http\Controllers\ProxyController::class, 'handle'])->where('url', '.*');

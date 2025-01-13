@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Image;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
@@ -42,6 +43,10 @@ class ArticleController extends Controller
 
         $this->attachContentImages($article, $validated['content']);
 
+        if ($article->is_published) {
+            $this->addToSitemap($article);
+        }
+
         return redirect()->route('admin.articles.index')
             ->with('success', 'Article created successfully');
     }
@@ -69,9 +74,16 @@ class ArticleController extends Controller
             $validated['image'] = $request->file('image')->store('articles', 'public');
         }
 
+        $wasPublished = $article->is_published;
         $article->update($validated);
 
         $this->attachContentImages($article, $validated['content']);
+
+        if (!$wasPublished && $article->is_published) {
+            $this->addToSitemap($article);
+        } elseif ($wasPublished && !$article->is_published) {
+            $this->removeFromSitemap($article);
+        }
 
         return redirect()->route('admin.articles.index')
             ->with('success', 'Article updated successfully');
@@ -104,5 +116,36 @@ class ArticleController extends Controller
                     ]);
             }
         }
+    }
+
+    private function addToSitemap($article)
+    {
+        $sourceDomain = 'https://' . config('url_mappings.source_domain');
+        $articleUrl = url("{$sourceDomain}/tin-tuc/{$article->slug}");
+
+        if (!DB::table('sitemaps')->where('url', $articleUrl)->exists()) {
+            DB::table('sitemaps')->insert([
+                'url' => $articleUrl,
+                'parent_path' => 'posts.xml',
+                'last_modified' => now(),
+                'level' => 1,
+                'is_index' => false,
+                'priority' => '0.8',
+                'changefreq' => 'daily',
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+    }
+
+    private function removeFromSitemap($article)
+    {
+        $sourceDomain = 'https://' . config('url_mappings.source_domain');
+        DB::table('sitemaps')
+            ->where([
+                'url' => url("{$sourceDomain}/tin-tuc/{$article->slug}"),
+                'parent_path' => 'posts.xml'
+            ])
+            ->delete();
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
@@ -20,6 +21,7 @@ class Article extends Model
     protected static function boot()
     {
         parent::boot();
+
         static::creating(function ($article) {
             // Prepare slug before saving
             $slug = Str::slug($article->title);
