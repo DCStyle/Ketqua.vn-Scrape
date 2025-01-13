@@ -25,9 +25,12 @@ return new class extends Migration
             $table->string('priority', 10)->nullable();
             $table->string('changefreq', 20)->nullable();
             $table->timestamps();
-
-            $table->index('url');
         });
+
+        // Add fulltext index
+        DB::statement('ALTER TABLE sitemaps ADD FULLTEXT url_fulltext (url)');
+        DB::statement('ALTER TABLE sitemaps ADD FULLTEXT parent_path_fulltext (parent_path)');
+        DB::statement('ALTER TABLE sitemaps ADD FULLTEXT url_parent_path_fulltext (url, parent_path)');
 
         // Add default sitemap
         $urls = [

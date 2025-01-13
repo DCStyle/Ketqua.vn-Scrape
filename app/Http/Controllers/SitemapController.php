@@ -20,7 +20,6 @@ class SitemapController extends Controller
 
     public function show($path)
     {
-        // Add .xml to path if it doesn't have
         if (!preg_match('/\.xml$/', $path)) {
             $path .= '.xml';
         }
@@ -28,12 +27,10 @@ class SitemapController extends Controller
         $config = config('url_mappings');
         $sourceDomain = $config['source_domain'];
 
-        // Handle result index sitemap
         if ($path === 'results.xml') {
             $urls = DB::table('sitemaps')
                 ->where('parent_path', 'results.xml')
-                // Where url is not end with results.xml
-                ->where('url', 'not like', '%results.xml')
+                ->whereRaw('NOT MATCH(url) AGAINST(? IN BOOLEAN MODE)', ['results.xml'])
                 ->get()
                 ->map(fn($item) => $this->formatSitemapUrl($item));
 
@@ -42,7 +39,6 @@ class SitemapController extends Controller
             ])->header('Content-Type', 'text/xml');
         }
 
-        // Handle yearly result sitemaps
         if (preg_match('/result-(\d{4})\.xml/', $path, $matches)) {
             $year = $matches[1];
 
@@ -51,17 +47,13 @@ class SitemapController extends Controller
                 ->whereYear('last_modified', $year)
                 ->orderBy('url');
 
-            $totalUrls = $query->count();
-            $urls = $query
-                ->get()
-                ->map(fn($item) => $this->formatUrl($item));
+            $urls = $query->get()->map(fn($item) => $this->formatUrl($item));
 
             return response()->view('sitemaps.urlset', [
                 'urls' => $urls
             ])->header('Content-Type', 'text/xml');
         }
 
-        // Handle other sitemaps
         $urls = DB::table('sitemaps')
             ->where('parent_path', $path)
             ->orderBy('url')
