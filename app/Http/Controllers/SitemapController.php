@@ -30,7 +30,8 @@ class SitemapController extends Controller
         if ($path === 'results.xml') {
             $urls = DB::table('sitemaps')
                 ->where('parent_path', 'results.xml')
-                ->whereRaw('NOT MATCH(url) AGAINST(? IN BOOLEAN MODE)', ['results.xml'])
+                // Where url not ending with 'results.xml'
+                ->where('url', 'not like', '%results.xml')
                 ->get()
                 ->map(fn($item) => $this->formatSitemapUrl($item));
 
@@ -40,11 +41,8 @@ class SitemapController extends Controller
         }
 
         if (preg_match('/result-(\d{4})\.xml/', $path, $matches)) {
-            $year = $matches[1];
-
             $query = DB::table('sitemaps')
                 ->where('parent_path', $path)
-                ->whereYear('last_modified', $year)
                 ->orderBy('url');
 
             $urls = $query->get()->map(fn($item) => $this->formatUrl($item));
