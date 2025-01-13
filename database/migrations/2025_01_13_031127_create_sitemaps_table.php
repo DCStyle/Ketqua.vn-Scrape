@@ -12,9 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Drop table if exists
+        Schema::dropIfExists('sitemaps');
+
         Schema::create('sitemaps', function (Blueprint $table) {
             $table->id();
-            $table->string('url', 1000);
+            $table->mediumText('url');
             $table->string('parent_path', 255)->nullable()->index();
             $table->timestamp('last_modified')->nullable();
             $table->integer('level')->default(0)->index();
