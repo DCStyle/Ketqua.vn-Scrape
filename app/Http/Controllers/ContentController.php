@@ -7,6 +7,8 @@ use App\Services\Scrapers\BaseScraper;
 use App\Services\Scrapers\CheckLotteryTicketScraper;
 use App\Services\Scrapers\DefaultScraper;
 use App\Services\Scrapers\HistoricalResultsScraper;
+use App\Services\Scrapers\SoiCauScraper;
+use App\Services\Scrapers\ThongKeScraper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
@@ -31,6 +33,48 @@ class ContentController extends Controller
         $this->scrapers['so-ket-qua'] = function() {
             return new HistoricalResultsScraper(10);
         };
+
+        $soiCauTypes = [
+            'loto',
+            'loto-theo-thu',
+            'bach-thu',
+            'loto-bach-thu-theo-thu',
+            'giai-dac-biet',
+            'giai-dac-biet-theo-thu',
+            'an-hai-nhay',
+            'tam-giac',
+            'loai-loto',
+            'loai-loto-bach-thu',
+        ];
+
+        foreach ($soiCauTypes as $type) {
+            $this->scrapers["soi-cau/{$type}"] = function() use ($type) {
+                return new SoiCauScraper($type);
+            };
+        }
+
+        $thongKeTypes = [
+            'loto-gan',
+            'chu-ky-dan-loto',
+            'ket-qua-xo-so',
+            'dau-duoi-loto',
+            'tan-suat-loto',
+            'chu-ky-dan-dac-biet',
+            'cang-loto',
+            'theo-tong',
+            'quan-trong',
+            'dai-nhat',
+            'chu-ky-gan-theo-tinh',
+            'tan-so-nhip-loto',
+            'dac-biet-tuan',
+            'dac-biet-thang',
+        ];
+
+        foreach ($thongKeTypes as $type) {
+            $this->scrapers["thong-ke/{$type}"] = function() use ($type) {
+                return new ThongKeScraper($type);
+            };
+        }
 
         return $this->scrapers;
     }
@@ -97,11 +141,12 @@ class ContentController extends Controller
     private function createResponse(array $result): View
     {
         $metadata = $result['metadata'] ?? null;
+        $viewData = $result['data'] ?? [];
 
         return view($result['template'], [
             'content' => $result['content'],
             'metadata' => $metadata
-        ])->withHeaders([
+        ] + $viewData)->withHeaders([
             'X-Robots-Tag' => 'noindex, nofollow',
             'Cache-Control' => 'public, max-age=300'
         ]);

@@ -15,7 +15,7 @@
                         <div class="col-sm-6 form-padding">
                             <lable class="fw-medium txt-sub-content d-block m-b-5">Chọn ngày cần xem</lable>
                             <div class="form-date position-relative">
-                                <span class="Zebra_DatePicker_Icon_Wrapper" style="display: block; position: relative; float: none; inset: auto;"><input class="form-control datepicker" type="text" name="search_date" value="05-01-2025" placeholder="Chọn ngày" readonly="readonly" style="position: relative; inset: auto;"><button type="button" class="Zebra_DatePicker_Icon Zebra_DatePicker_Icon_Inside" style="top: 11px; left: 239px;">Pick a date</button></span>
+                                <span class="Zebra_DatePicker_Icon_Wrapper" style="display: block; position: relative; float: none; inset: auto;"><input class="form-control datepicker" type="text" name="search_date" value="{{ now()->format('d-m-Y') }}" placeholder="Chọn ngày" readonly="readonly" style="position: relative; inset: auto;"><button type="button" class="Zebra_DatePicker_Icon Zebra_DatePicker_Icon_Inside" style="top: 11px; left: 239px;">Pick a date</button></span>
                             </div>
                         </div>
                         <div class="col-sm-6 form-padding">
@@ -86,7 +86,7 @@
                             <tr>
                                 <th colspan="27">
                                     <a class="color-brand text-decoration-none fw-bold txt-title" href="/">
-                                        Kết quả xổ số Hà Nội - Ngày 05/01/2025
+                                        Kết quả xổ số Hà Nội
                                     </a>
                                 </th>
                             </tr>
@@ -97,7 +97,7 @@
                                                 <img src="/assets/images/result-not-found.svg" alt="notfound">
                                             </div>
                                             <div class="color-secondary txt-sub-title fw-normal text-center">
-                                                Không mở thưởng !
+                                                Click vào nút "Xem kết quả" để xem kết quả xổ số
                                             </div>
                                         </div>
                                     </div>
@@ -153,6 +153,9 @@
                     getSearchResult(this);
                 });
             });
+
+            // Initialize click on the button
+            getSearchResult(document.querySelector('[onclick^="getSearchResult"]'));
         });
     </script>
 @endpush

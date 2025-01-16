@@ -3,6 +3,8 @@
 <head>
     @yield('seo')
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     @if(isset($metadata))
         <title>{{ $metadata['title'] }}</title>
 
@@ -31,7 +33,6 @@
         <meta charset="utf-8">
         <meta name="description" content="@yield('description', setting('site_description'))">
         <meta name="keywords" content="@yield('keywords', setting('site_keywords'))">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="theme-color" content="#ffffff">
 
         <meta property="og:title" content="@yield('title', setting('site_name'))">
@@ -80,16 +81,50 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment-with-locales.min.js" integrity="sha512-4F1cxYdMiAW98oomSLaygEwmCnIP38pb4Kx70yQYqRwLVCs3DbRumfBq82T08g/4LJ/smbFGFpmeFlQgoDccgg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="{{ asset('js/zebra_datepicker.min.js') }}"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script>
+    function incrementDateRange(target) {
+        var targetValue = parseInt($(target).val());
+        $(target).val(targetValue + 1)
+    }
+    function decrementDateRange(target) {
+        var targetValue = parseInt($(target).val());
+        targetValue > 1 && $(target).val(targetValue - 1)
+    }
+
     $(document).ready(function() {
         // Initialize datepicker
         let format = "d-m-Y";
         $(".datepicker").Zebra_DatePicker({
             format: format
         });
+
+        // Initialize daterangepicker
+        $(".daterangepick").daterangepicker({
+            ranges: {
+                "Hôm nay": [moment(), moment()],
+                "Hôm qua": [moment().subtract(1, "days"), moment().subtract(0, "days")],
+                "7 ngày trước": [moment().subtract(6, "days"), moment()],
+                "30 ngày trước": [moment().subtract(29, "days"), moment()],
+                "Tháng này": [moment().startOf("month"), moment().endOf("month")],
+                "Tháng trước": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]
+            },
+            locale: {
+                format: "DD/MM/YYYY",
+                separator: " - ",
+                applyLabel: "Chọn",
+                cancelLabel: "Hủy",
+                fromLabel: "Từ",
+                toLabel: "Đến",
+                customRangeLabel: "Tùy chọn"
+            },
+            startDate: "01/01/2016",
+            endDate: moment().format("DD/MM/YYYY"),
+            timePicker: false,
+            autoUpdateInput: true
+        });
     });
 </script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="{{ asset('js/main.min.js') }}"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
