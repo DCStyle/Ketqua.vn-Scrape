@@ -7,6 +7,7 @@ use App\Services\Scrapers\BaseScraper;
 use App\Services\Scrapers\CheckLotteryTicketScraper;
 use App\Services\Scrapers\DefaultScraper;
 use App\Services\Scrapers\HistoricalResultsScraper;
+use App\Services\Scrapers\QuayThuScraper;
 use App\Services\Scrapers\SoiCauScraper;
 use App\Services\Scrapers\ThongKeScraper;
 use Illuminate\Http\Request;
@@ -76,6 +77,22 @@ class ContentController extends Controller
             };
         }
 
+        $quayThuTypes = [
+            'xsmb',
+            'xsmn',
+            'xsmt',
+        ];
+
+        foreach ($quayThuTypes as $type) {
+            $this->scrapers["quay-thu-{$type}"] = function() use ($type) {
+                return new QuayThuScraper($type);
+            };
+        }
+
+        $this->scrapers['quay-thu-xo-so-hom-nay'] = function() {
+            return new QuayThuScraper('xsmb');
+        };
+
         return $this->scrapers;
     }
 
@@ -99,7 +116,7 @@ class ContentController extends Controller
             Cache::put('last_cache_time', now(), now()->addDay());
         }
 
-        return $this->createResponse($result);
+        return $this->createResponse($result, $path);
     }
 
     private function handlePath(Request $request, string $path): ?array
@@ -138,9 +155,18 @@ class ContentController extends Controller
         return $scraper->handle($params);
     }
 
-    private function createResponse(array $result): View
+    private function createResponse(array $result, $path = ''): View
     {
         $metadata = $result['metadata'] ?? null;
+        if ($path == '') {
+            $metadata = [
+                'title' => setting('site_name'),
+                'description' => setting('site_description'),
+                'keywords' => setting('site_keywords'),
+                'canonical' => url()->current()
+            ];
+        }
+
         $viewData = $result['data'] ?? [];
 
         return view($result['template'], [
