@@ -25,7 +25,7 @@ class RssController extends Controller
                 'title' => setting('site_name'),
                 'description' => setting('site_description'),
                 'language' => 'vi-VN',
-                'lastBuildDate' => $items->first()?->last_modified ?? now(),
+                'lastBuildDate' => $items->first()?->last_modified ?? now()->toW3cString(),
             ])
             ->header('Content-Type', 'application/xml');
     }
@@ -49,7 +49,7 @@ class RssController extends Controller
                 'title' => setting('site_name') . " - {$category}",
                 'description' => setting('site_description'),
                 'language' => 'vi-VN',
-                'lastBuildDate' => $items->first()?->last_modified ?? now(),
+                'lastBuildDate' => $items->first()?->last_modified ?? now()->toW3cString(),
             ])
             ->header('Content-Type', 'application/xml');
     }
