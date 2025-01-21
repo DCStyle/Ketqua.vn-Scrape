@@ -19,19 +19,6 @@ import exportService from './services/export-service.js';
 
 class LotteryApp {
     constructor() {
-        if (window.firebase) {
-            firebase.initializeApp({
-                apiKey: "AIzaSyC6A1OOT1vJY-Gg4rKbIqYY9IT6QFazZuw",
-                authDomain: "ketqua.vn",
-                databaseURL: "https://ketquavn-7fdef-default-rtdb.asia-southeast1.firebasedatabase.app",
-                projectId: "ketquavn-7fdef",
-                storageBucket: "ketquavn-7fdef.appspot.com",
-                messagingSenderId: "549690883362",
-                appId: "1:549690883362:web:d28c780d4c9100b13df97b",
-                measurementId: "G-K1M5ZCFJNH"
-            });
-        }
-
         // Core modules
         this.config = LotteryConfig;
         this.utils = Utils;
@@ -55,9 +42,6 @@ class LotteryApp {
      * Initialize application
      */
     init() {
-        // Initialize Firebase
-        this.firebaseService.init();
-
         // Initialize sound system
         this.soundManager.initSounds();
 
