@@ -209,6 +209,18 @@ class ContentMirrorService
             }
         });
 
+        // Remove articles block
+        $crawler->filter('.list-group.list-group-custom.br-10.table-shadow.overflow-hidden.m-b-15')->each(function ($node) {
+           try {
+               $link = $node->filter('h3 a');
+               if ($link->count() > 0 && trim($link->text()) === 'Tin xổ số') {
+                   $node->getNode(0)->parentNode->removeChild($node->getNode(0));
+               }
+           }  catch (\Exception $e) {
+                // Skip non-matching nodes
+            }
+        });
+
         // Remove click handlers
         $crawler->filter('[onclick="loadMoreResults(this);"]')->each(function ($node) {
             $node->getNode(0)->parentNode->removeChild($node->getNode(0));

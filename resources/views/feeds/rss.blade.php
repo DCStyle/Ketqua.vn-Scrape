@@ -13,5 +13,19 @@
         </image>
         <language>{{ $language }}</language>
         <lastBuildDate>{{ $lastBuildDate }}</lastBuildDate>
+        <ttl>{{ $items->count() }}</ttl>
+        @foreach($items as $item)
+            <item>
+                <title>{{ $item->title }}</title>
+                <link>{{ route('articles.show', $item->slug) }}</link>
+                <guid>{{ route('articles.show', $item->slug) }}</guid>
+                <pubDate>{{ $item->created_at->toRssString() }}</pubDate>
+                <description>{{ "<![CDATA[ " . $item->exceprt(150) . " ]]>" }}</description>
+                <content:encoded>{{ "<![CDATA[ " . $item->exceprt(150) . " ]]>" }}</content:encoded>
+                <media:content url="{{ $item->image ? asset(Storage::url($item->image)) : 'https://placehold.co/126' }}" medium="image">
+                    <media:title>{{ $item->title }}</media:title>
+                </media:content>
+            </item>
+        @endforeach
     </channel>
 </rss>

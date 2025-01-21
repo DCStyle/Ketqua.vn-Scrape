@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
@@ -9,15 +10,9 @@ class RssController extends Controller
 {
     public function index()
     {
-        $items = Cache::remember('rss_feed', 60, function () {
-            return DB::table('sitemaps')
-                ->whereNotNull('last_modified')
-                ->where('is_index', false)
-                ->where('parent_path', 'posts.xml')
-                ->orderBy('last_modified', 'desc')
-                ->limit(100)
-                ->get();
-        });
+        $items = Article::orderBy('created_at', 'desc')
+            ->limit(15)
+            ->get();
 
         return response()
             ->view('feeds.rss', [
