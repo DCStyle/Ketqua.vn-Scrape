@@ -95,6 +95,13 @@ class ArticleController extends Controller
             Storage::disk('public')->delete($article->image);
         }
 
+        $sourceDomain = 'https://' . config('url_mappings.source_domain');
+        $articleUrl = url("{$sourceDomain}/tin-tuc/{$article->slug}");
+
+        if (!DB::table('sitemaps')->where('url', $articleUrl)->exists()) {
+            $this->removeFromSitemap($article);
+        }
+
         $article->delete();
 
         return redirect()->route('admin.articles.index')
