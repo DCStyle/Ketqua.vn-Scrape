@@ -127,7 +127,7 @@ class ArticleController extends Controller
             DB::table('sitemaps')->insert([
                 'url' => $articleUrl,
                 'parent_path' => 'posts.xml',
-                'last_modified' => now(),
+                'last_modified' => now()->toW3cString(),
                 'level' => 1,
                 'is_index' => false,
                 'priority' => '0.8',
@@ -135,6 +135,13 @@ class ArticleController extends Controller
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
+        } else {
+            DB::table('sitemaps')
+                ->where('url', $articleUrl)
+                ->update([
+                    'last_modified' => now()->toW3cString(),
+                    'updated_at' => now()
+                ]);
         }
     }
 
