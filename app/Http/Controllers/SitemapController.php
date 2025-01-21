@@ -68,7 +68,7 @@ class SitemapController extends Controller
         $sourceDomain = config('url_mappings.source_domain');
         return [
             'loc' => str_replace($sourceDomain, request()->getHost(), $item->url),
-            'lastmod' => $item->last_modified ?? now()->format('c'),
+            'lastmod' => $item->last_modified ?? now()->toW3cString(),
             'changefreq' => $item->changefreq ?? 'daily',
             'priority' => $item->priority ?? '0.5'
         ];
@@ -79,7 +79,7 @@ class SitemapController extends Controller
         $sourceDomain = config('url_mappings.source_domain');
         return [
             'loc' => str_replace($sourceDomain, request()->getHost(), $item->url),
-            'lastmod' => $item->last_modified ?? now()->format('c')
+            'lastmod' => $item->last_modified ?? now()->toW3cString()
         ];
     }
 }
