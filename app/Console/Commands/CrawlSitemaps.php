@@ -23,6 +23,9 @@ class CrawlSitemaps extends Command
         $this->info('Starting sitemap crawl...');
 
         try {
+            // Clear existing sitemap data
+            DB::table('sitemaps')->truncate();
+
             $this->processSitemapFile($this->sourceUrl . '/sitemap.xml', 0, 'sitemap.xml');
 
             $this->info("Completed processing " . count($this->processed) . " URLs");
