@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class SitemapController extends Controller
@@ -68,7 +69,9 @@ class SitemapController extends Controller
         $sourceDomain = config('url_mappings.source_domain');
         return [
             'loc' => str_replace($sourceDomain, request()->getHost(), $item->url),
-            'lastmod' => date('c', strtotime($item->last_modified)) ?? now()->toW3cString(),
+            'lastmod' => Carbon::parse($item->last_modified)
+                ->setTimezone('Asia/Ho_Chi_Minh')
+                ->toW3cString(),
             'changefreq' => $item->changefreq ?? 'daily',
             'priority' => $item->priority ?? '0.5'
         ];
@@ -79,7 +82,9 @@ class SitemapController extends Controller
         $sourceDomain = config('url_mappings.source_domain');
         return [
             'loc' => str_replace($sourceDomain, request()->getHost(), $item->url),
-            'lastmod' => date('c', strtotime($item->last_modified)) ?? now()->toW3cString()
+            'lastmod' => Carbon::parse($item->last_modified)
+                ->setTimezone('Asia/Ho_Chi_Minh')
+                ->toW3cString()
         ];
     }
 }
