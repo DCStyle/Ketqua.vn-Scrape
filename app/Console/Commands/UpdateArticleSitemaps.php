@@ -15,6 +15,9 @@ class UpdateArticleSitemaps extends Command
     {
         $sourceDomain = 'https://' . config('url_mappings.source_domain');
 
+        // Truncate sitemaps table for articles
+        DB::table('sitemaps')->where('parent_path', 'posts.xml')->delete();
+
         $articles = Article::where('is_published', true)->get();
         $count = 0;
 
