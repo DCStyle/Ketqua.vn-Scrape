@@ -23,7 +23,7 @@ class ContentController extends Controller
 
     protected function initializeScrapers(): array
     {
-        $durations = [30, 90, 100, 200, 300, 500];
+        $durations = [30, 60, 90, 100, 200, 300, 500];
 
         foreach ($durations as $days) {
             $this->scrapers["so-ket-qua-{$days}-ngay"] = function() use ($days) {

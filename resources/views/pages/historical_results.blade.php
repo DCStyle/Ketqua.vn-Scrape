@@ -65,7 +65,7 @@
                             </select>
                         </div>
                         <div class="col-sm col-md-6 col-lg-3 form-padding align-self-end">
-                            <button class="btn text-white bg-btn w-100 text-nowrap line-clamp-1" onclick="getResultBook(this);">
+                            <button id="get-result-book" class="btn text-white bg-btn w-100 text-nowrap line-clamp-1">
                                 Xem kết quả
                             </button>
                         </div>
@@ -92,54 +92,53 @@
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            function getResultBook(button) {
-                const fromDate = document.querySelector('input[name="from_date"]').value;
-                const toDate = document.querySelector('input[name="to_date"]').value;
-                const provinceId = document.querySelector('select[name="province_id"]').value;
+        // Define function globally
+        function getResultBook(button) {
+            const fromDate = document.querySelector('input[name="from_date"]').value;
+            const toDate = document.querySelector('input[name="to_date"]').value;
+            const provinceId = document.querySelector('select[name="province_id"]').value;
 
-                if (!fromDate || !toDate || !provinceId) {
-                    console.error('Missing required fields');
-                    return;
-                }
-
-                const formData = new URLSearchParams();
-                formData.append('range', fromDate.replaceAll("-", "/") + " - " + toDate.replaceAll("-", "/"));
-                formData.append('province_id', provinceId);
-
-                $.ajax({
-                    url: '/proxy/' + btoa('https://ketqua.vn/so-ket-qua'),
-                    data: formData.toString(),
-                    type: "post",
-                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                    dataType: 'html',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    beforeSend: function() {
-                        button.innerHTML = '<i class="fas fa-spinner load"></i> Loading';
-                    },
-                    success: function(data) {
-                        document.getElementById('results').innerHTML = data;
-                        button.innerHTML = "Xem kết quả";
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Search error:', error);
-                        button.innerHTML = "Xem kết quả";
-                        document.getElementById('results').innerHTML = '<div class="alert alert-danger">Có lỗi xảy ra, vui lòng thử lại</div>';
-                    }
-                });
+            if (!fromDate || !toDate || !provinceId) {
+                console.error('Missing required fields');
+                return;
             }
 
-            // Add click event listeners to result book buttons
-            document.querySelectorAll('[onclick^="getResultBook"]').forEach(button => {
-                button.removeAttribute('onclick');
-                button.addEventListener('click', function() {
-                    getResultBook(this);
-                });
+            const formData = new URLSearchParams();
+            formData.append('range', fromDate.replaceAll("-", "/") + " - " + toDate.replaceAll("-", "/"));
+            formData.append('province_id', provinceId);
 
-                button.click();
+            $.ajax({
+                url: 'https://ketqua5s.com/?url=' + btoa('https://ketqua.vn/so-ket-qua'),
+                data: formData.toString(),
+                type: "post",
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                dataType: 'html',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                beforeSend: function() {
+                    button.innerHTML = '<i class="fas fa-spinner load"></i> Loading';
+                },
+                success: function(data) {
+                    document.getElementById('results').innerHTML = data;
+                    button.innerHTML = "Xem kết quả";
+                },
+                error: function(xhr, status, error) {
+                    console.error('Search error:', error);
+                    button.innerHTML = "Xem kết quả";
+                    document.getElementById('results').innerHTML = '<div class="alert alert-danger">Có lỗi xảy ra, vui lòng thử lại</div>';
+                }
             });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click event listener
+            document.getElementById('get-result-book').addEventListener('click', function() {
+                getResultBook(this);
+            });
+
+            // Auto click the button
+            document.getElementById('get-result-book').click();
         });
     </script>
 @endpush

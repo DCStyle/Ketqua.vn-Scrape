@@ -154,11 +154,11 @@ class ContentMirrorService
         $defaultConfig = config('url_mappings.default_scrape');
         return $this->makeRequest(
             $path,
-            [],
+            request()->all(),
             $defaultConfig['template'],
             $defaultConfig['main_selector'],
             $defaultConfig['source_url'],
-            'GET'
+            request()->method()
         );
     }
 
@@ -174,11 +174,11 @@ class ContentMirrorService
 
     private function sendRequest(string $url, array $params, string $method): \Illuminate\Http\Client\Response
     {
-        return Http::timeout(30)
-            ->withHeaders([
-                'User-Agent' => $this->getRandomUserAgent()
-            ])
-            ->send($method, rtrim($url, '/'), ['form_params' => $params]);
+        $proxyUrl = 'https://ketqua5s.com';
+        $encodedUrl = base64_encode(rtrim($url, '/'));
+
+        $proxyRequest = Http::timeout(300);
+        return $proxyRequest->get($proxyUrl . '?url=' . $encodedUrl);
     }
 
     private function extractContent(string $html, string $selector): string
