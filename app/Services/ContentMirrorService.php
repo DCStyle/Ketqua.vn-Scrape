@@ -190,6 +190,7 @@ class ContentMirrorService
     private function processContent($content): string
     {
         $ourDomain = rtrim(env('APP_URL'), '/');
+        $ourBaseDomain = parse_url($ourDomain, PHP_URL_HOST);
 
         $crawler = new Crawler($content);
 
@@ -229,6 +230,8 @@ class ContentMirrorService
         $content = $crawler->html();
 
         // Fix URL formats and protocols
+        $content = str_ireplace(strtolower($this->sourceDomain), $ourBaseDomain, $content);
+
         $content = preg_replace(
             [
                 '#(href|src)="https?://https?:?/?/#',  // Fix protocol issues
