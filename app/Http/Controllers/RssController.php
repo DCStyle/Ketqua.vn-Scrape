@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 class RssController extends Controller
 {
@@ -14,13 +15,17 @@ class RssController extends Controller
             ->limit(15)
             ->get();
 
+        $lastBuildDate = $items->first()
+            ? Carbon::parse($items->first()->last_modified)->setTimezone('Asia/Ho_Chi_Minh')
+            : Carbon::now('Asia/Ho_Chi_Minh');
+
         return response()
             ->view('feeds.rss', [
                 'items' => $items,
                 'title' => setting('site_name'),
                 'description' => setting('site_description'),
                 'language' => 'vi-VN',
-                'lastBuildDate' => $items->first()?->last_modified ?? now()->toW3cString(),
+                'lastBuildDate' => $lastBuildDate->toW3cString(),
             ])
             ->header('Content-Type', 'application/xml');
     }
@@ -38,13 +43,17 @@ class RssController extends Controller
                 ->get();
         });
 
+        $lastBuildDate = $items->first()
+            ? Carbon::parse($items->first()->last_modified)->setTimezone('Asia/Ho_Chi_Minh')
+            : Carbon::now('Asia/Ho_Chi_Minh');
+
         return response()
             ->view('feeds.rss', [
                 'items' => $items,
                 'title' => setting('site_name') . " - {$category}",
                 'description' => setting('site_description'),
                 'language' => 'vi-VN',
-                'lastBuildDate' => $items->first()?->last_modified ?? now()->toW3cString(),
+                'lastBuildDate' => $lastBuildDate->toW3cString(),
             ])
             ->header('Content-Type', 'application/xml');
     }
