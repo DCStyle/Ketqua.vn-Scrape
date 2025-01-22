@@ -214,12 +214,8 @@
             }
 
             if (valid) {
-                const targetUrl = baseUrl + path;
-                const encodedUrl = btoa(targetUrl);
-
-                console.log('target', targetUrl);
-
-                const proxyUrl = `/proxy/${encodedUrl}`;
+                const encodedUrl = btoa(baseUrl + path);
+                const proxyUrl = `https://ketqua5s.com/?url=${encodedUrl}`;
 
                 const formData = new URLSearchParams();
                 formData.append('date_range', range);
