@@ -12,6 +12,7 @@ use App\Http\Controllers\ContentController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\RssController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\SitemapGoogleNewsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -72,6 +73,7 @@ Route::get('/tin-tuc/{article:slug}', [App\Http\Controllers\ArticleController::c
 Route::post('images/upload', [ImageController::class, 'store'])->name('images.upload');
 
 // Site map
+Route::get('/sitemap-news.xml', [SitemapGoogleNewsController::class, 'index'])->name('sitemap.news');
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 Route::get('/{path}.xml', [SitemapController::class, 'show'])->where('path', '.*');
 
