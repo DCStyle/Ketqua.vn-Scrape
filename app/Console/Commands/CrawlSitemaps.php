@@ -23,9 +23,6 @@ class CrawlSitemaps extends Command
         $this->info('Starting sitemap crawl...');
 
         try {
-            // Clear existing sitemap data
-            DB::table('sitemaps')->truncate();
-
             // Add default sitemap
             $urls = [
                 'https://ketqua.vn/pages.xml',
