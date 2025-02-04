@@ -230,6 +230,8 @@ class ContentMirrorService
         $content = $crawler->html();
 
         // Fix URL formats and protocols
+        $content = str_ireplace('https://' . $this->sourceDomain, $ourDomain, $content);
+
         $content = str_ireplace(strtolower($this->sourceDomain), $ourBaseDomain, $content);
 
         $content = preg_replace(
