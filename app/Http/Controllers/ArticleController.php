@@ -11,9 +11,26 @@ class ArticleController extends Controller
         // Get latest paginated articles
         $latestArticles = Article::latest()
             ->where('is_published', 1)
+            ->where('is_prediction', false)
             ->paginate(10);
 
         return view('articles.index', compact('latestArticles'));
+    }
+
+    public function prediction($type)
+    {
+        if (!in_array($type, ['xsmb', 'xsmt', 'xsmn'])) {
+            abort(404);
+        }
+
+        // Get latest paginated prediction articles
+        $latestArticles = Article::latest()
+            ->where('is_published', 1)
+            ->where('is_prediction', true)
+            ->where('prediction_type', $type)
+            ->paginate(10);
+
+        return view('articles.prediction', compact('latestArticles'));
     }
 
     public function show(Article $article)
@@ -29,8 +46,17 @@ class ArticleController extends Controller
         }
 
         // Get related articles
-        $relatedArticles = Article::where('id', '!=', $article->id)
-            ->where('is_published', 1)
+        $relatedArticles = Article::where('id', '!=', $article->id);
+
+        if ($article->is_prediction) {
+            $relatedArticles = $relatedArticles
+                ->where('is_prediction', 1)
+                ->where('prediction_type', $article->prediction_type);
+        } else {
+            $relatedArticles = $relatedArticles->where('is_prediction', 0);
+        }
+
+        $relatedArticles = $relatedArticles->where('is_published', 1)
             ->latest()
             ->limit(5)
             ->get();

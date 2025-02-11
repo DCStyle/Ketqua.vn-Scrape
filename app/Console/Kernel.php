@@ -8,6 +8,13 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     /**
+     * The Artisan commands provided by your application.
+     */
+    protected $commands = [
+        Commands\CrawlPredictionArticles::class
+    ];
+
+    /**
      * Define the application's command schedule.
      */
     protected function schedule(Schedule $schedule): void
@@ -17,6 +24,11 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->runInBackground()
             ->emailOutputOnFailure(env('ADMIN_EMAIL'));
+
+        $schedule->command('crawl:predictions')
+            ->hourly()
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/crawler.log'));
     }
 
     /**

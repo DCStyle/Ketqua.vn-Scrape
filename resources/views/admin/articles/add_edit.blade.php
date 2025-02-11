@@ -77,6 +77,36 @@
                         </div>
                     </div>
 
+                    <!-- Prediction options -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                       <div class="space-y-4">
+                            <div class="flex items center justify-between">
+                                <span class="text-sm text-gray-700">Dự đoán kết quả xổ số</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox"
+                                           name="is_prediction"
+                                           value="1"
+                                           class="sr-only peer"
+                                            {{ old('is_prediction', $article->is_prediction) ? 'checked' : '' }}>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+
+                           <!-- Select prediction category -->
+                            <div>
+                                <select name="prediction_type" id="prediction_type" class="w-full rounded-lg border-gray-300 text-sm">
+                                    <option value="" {{ (!$article->exists || $article->prediction_type == null) ? 'selected' : '' }}>Chọn danh mục dự đoán</option>
+                                    @foreach(\App\Models\PredictionCategory::all() as $category)
+                                    <option value="{{ $category->type }}"
+                                        {{ old('prediction_type', $article->prediction_type ?? null) == $category->type ? 'selected' : '' }}>
+                                        {{ $category->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Featured Image -->
                     <div class="bg-white rounded-xl shadow-sm p-6">
                         <h3 class="font-medium mb-4">Ảnh đại diện</h3>

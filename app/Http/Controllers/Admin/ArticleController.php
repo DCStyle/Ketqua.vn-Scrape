@@ -11,9 +11,33 @@ use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $articles = Article::latest()->paginate(15);
+        $type = $request->get('type', 'normal');
+
+        $query = Article::query();
+
+        // Filter by type
+        switch ($type) {
+            case 'prediction':
+                $query->where('is_prediction', true);
+                break;
+            case 'normal':
+            default:
+                $query->where('is_prediction', false);
+                break;
+        }
+
+        // Search functionality
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $query->where('title', 'like', "%{$search}%");
+        }
+
+        $articles = $query->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return view('admin.articles.index', compact('articles'));
     }
 
@@ -32,8 +56,15 @@ class ArticleController extends Controller
             'image' => 'nullable|image|max:2048',
             'is_published' => 'boolean',
             'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string'
+            'meta_description' => 'nullable|string',
+            'is_prediction' => 'boolean',
+            'prediction_type' => 'nullable|string|in:xsmb,xsmn,xsmt'
         ]);
+
+        if (!isset($validated['is_prediction'])) {
+            $validated['is_prediction'] = false;
+            $validated['prediction_type'] = null;
+        }
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('articles', 'public');
@@ -47,7 +78,7 @@ class ArticleController extends Controller
             $this->addToSitemap($article);
         }
 
-        return redirect()->route('admin.articles.index')
+        return redirect()->route('admin.articles.index', ['type' => $article->is_prediction ? 'prediction' : 'normal'])
             ->with('success', 'Article created successfully');
     }
 
@@ -64,8 +95,15 @@ class ArticleController extends Controller
             'image' => 'nullable|image|max:2048',
             'is_published' => 'boolean',
             'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string'
+            'meta_description' => 'nullable|string',
+            'is_prediction' => 'boolean',
+            'prediction_type' => 'nullable|string|in:xsmb,xsmn,xsmt'
         ]);
+
+        if (!isset($validated['is_prediction'])) {
+            $validated['is_prediction'] = false;
+            $validated['prediction_type'] = null;
+        }
 
         if ($request->hasFile('image')) {
             if ($article->image) {
@@ -85,7 +123,7 @@ class ArticleController extends Controller
             $this->removeFromSitemap($article);
         }
 
-        return redirect()->route('admin.articles.index')
+        return redirect()->route('admin.articles.index', ['type' => $article->is_prediction ? 'prediction' : 'normal'])
             ->with('success', 'Article updated successfully');
     }
 
@@ -104,7 +142,7 @@ class ArticleController extends Controller
 
         $article->delete();
 
-        return redirect()->route('admin.articles.index')
+        return redirect()->route('admin.articles.index', ['type' => $article->is_prediction ? 'prediction' : 'normal'])
             ->with('success', 'Article deleted successfully');
     }
 
@@ -130,26 +168,23 @@ class ArticleController extends Controller
         $sourceDomain = 'https://' . config('url_mappings.source_domain');
         $articleUrl = url("{$sourceDomain}/tin-tuc/{$article->slug}");
 
-        if (!DB::table('sitemaps')->where('url', $articleUrl)->exists()) {
-            DB::table('sitemaps')->insert([
-                'url' => $articleUrl,
-                'parent_path' => 'posts.xml',
-                'last_modified' => now()->toW3cString(),
-                'level' => 1,
-                'is_index' => false,
-                'priority' => '0.8',
-                'changefreq' => 'daily',
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-        } else {
-            DB::table('sitemaps')
-                ->where('url', $articleUrl)
-                ->update([
-                    'last_modified' => now()->toW3cString(),
-                    'updated_at' => now()
-                ]);
+        // Remove the article from sitemap first if it exists
+        if (DB::table('sitemaps')->where('url', $articleUrl)->exists()) {
+            $this->removeFromSitemap($article);
         }
+
+        // Then insert new record
+        DB::table('sitemaps')->insert([
+            'url' => $articleUrl,
+            'parent_path' => $article->is_prediction ? 'predictions.xml' : 'posts.xml',
+            'last_modified' => now()->format('Y-m-d H:i:s'),
+            'level' => 1,
+            'is_index' => false,
+            'priority' => '0.8',
+            'changefreq' => 'daily',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
     }
 
     private function removeFromSitemap($article)
@@ -158,7 +193,7 @@ class ArticleController extends Controller
         DB::table('sitemaps')
             ->where([
                 'url' => url("{$sourceDomain}/tin-tuc/{$article->slug}"),
-                'parent_path' => 'posts.xml'
+                'parent_path' => $article->is_prediction ? 'predictions.xml' : 'posts.xml'
             ])
             ->delete();
     }

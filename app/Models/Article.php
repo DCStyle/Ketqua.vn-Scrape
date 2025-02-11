@@ -15,7 +15,15 @@ class Article extends Model
     use HasSEO;
 
     protected $fillable = [
-        'title', 'slug', 'content', 'image', 'is_published', 'meta_title', 'meta_description'
+        'title',
+        'slug',
+        'content',
+        'image',
+        'is_published',
+        'meta_title',
+        'meta_description',
+        'is_prediction',
+        'prediction_type'
     ];
 
     protected static function boot()

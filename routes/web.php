@@ -67,6 +67,9 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 
 // Articles
 Route::get('/tin-tuc', [App\Http\Controllers\ArticleController::class, 'index'])->name('articles.index');
+Route::get('/du-doan-{type}', [App\Http\Controllers\ArticleController::class, 'prediction'])
+    ->where('type', 'xsmb|xsmt|xsmn')
+    ->name('articles.prediction');
 Route::get('/tin-tuc/{article:slug}', [App\Http\Controllers\ArticleController::class, 'show'])->name('articles.show');
 
 // Images
