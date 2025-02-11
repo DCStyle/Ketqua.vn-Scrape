@@ -12,12 +12,8 @@ class DashboardController extends Controller
         $this->middleware(['auth', 'verified']);
     }
 
-    public function index(CacheService $cacheService)
+    public function index()
     {
-        return view('admin.dashboard', [
-            'cacheSize' => $cacheService->getTotalCacheSize(),
-            'lastCacheUrl' => $cacheService->getLastCacheUrl(),
-            'lastCacheTime' => $cacheService->getLastCacheTime()
-        ]);
+        return view('admin.dashboard');
     }
 }

@@ -5,61 +5,6 @@
 
 @section('content')
     <div class="p-6">
-        {{-- Stats Overview --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <div class="flex items-center gap-4">
-                    <div class="p-3 bg-blue-100 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Dung lượng Cache</p>
-                        <p class="text-2xl font-semibold text-gray-900">
-                            {{ $cacheSize }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <div class="flex items-center gap-4">
-                    <div class="p-3 bg-green-100 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">URL Cache Gần Nhất</p>
-                        <p class="text-sm font-semibold text-gray-900 truncate max-w-[200px]">
-                            {{ $lastCacheUrl }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <div class="flex items-center gap-4">
-                    <div class="p-3 bg-purple-100 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600">Thời Gian Cache Cuối</p>
-                        <p class="text-2xl font-semibold text-gray-900">
-                            {{ $lastCacheTime }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         {{-- Main Features --}}
         <h2 class="text-xl font-semibold text-gray-800 mb-4">Tính Năng Chính</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
