@@ -133,12 +133,7 @@ class ArticleController extends Controller
             Storage::disk('public')->delete($article->image);
         }
 
-        $sourceDomain = 'https://' . config('url_mappings.source_domain');
-        $articleUrl = url("{$sourceDomain}/tin-tuc/{$article->slug}");
-
-        if (!DB::table('sitemaps')->where('url', $articleUrl)->exists()) {
-            $this->removeFromSitemap($article);
-        }
+        $this->removeFromSitemap($article);
 
         $article->delete();
 
@@ -231,10 +226,6 @@ class ArticleController extends Controller
 
     private function removeFromSitemap($article)
     {
-        DB::table('sitemaps')
-            ->where('parent_path', 'predictions.xml')
-            ->delete();
-
         $sourceDomain = 'https://' . config('url_mappings.source_domain');
         DB::table('sitemaps')
             ->where([
