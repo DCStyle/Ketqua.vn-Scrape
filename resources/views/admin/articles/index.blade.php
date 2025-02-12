@@ -38,12 +38,23 @@
 
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <a href="{{ route('admin.articles.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-colors">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                        </svg>
-                        Thêm bài viết mới
-                    </a>
+                    <div class="inline-flex items-center space-x-2">
+                        <a href="{{ route('admin.articles.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-colors">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            Thêm bài viết mới
+                        </a>
+
+                        <button type="button" id="bulk-delete-button"
+                                class="hidden items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:ring-4 focus:ring-red-300 transition-colors">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                            Xóa các mục đã chọn
+                            <span id="selected-count" class="ml-2 bg-red-700 px-2 py-1 rounded-full text-xs"></span>
+                        </button>
+                    </div>
 
                     <form method="GET" class="relative flex-1 sm:max-w-xs">
                         <input type="text" name="search" placeholder="Tìm kiếm bài viết..." value="{{ request('search') }}"
@@ -61,6 +72,12 @@
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gray-50 dark:bg-gray-700">
                     <tr>
+                        <th class="px-6 py-3 text-left">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="select-all"
+                                       class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600">
+                            </div>
+                        </th>
                         <th class="px-6 py-3 text-left">
                             <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tiêu đề</span>
                         </th>
@@ -81,6 +98,12 @@
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($articles as $article)
                         <tr class="group hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="selected_articles[]" value="{{ $article->id }}"
+                                           class="article-checkbox w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600">
+                                </div>
+                            </td>
                             <td class="px-6 py-4">
                                 <div class="text-sm font-medium text-gray-900 dark:text-white">
                                     {{ $article->title }}
@@ -156,3 +179,124 @@
         </div>
     </div>
 @endsection
+
+@push('styles')
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.css" rel="stylesheet">
+@endpush
+
+@push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.32/sweetalert2.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAllCheckbox = document.getElementById('select-all');
+            const articleCheckboxes = document.querySelectorAll('.article-checkbox');
+            const bulkDeleteButton = document.getElementById('bulk-delete-button');
+            const selectedCountSpan = document.getElementById('selected-count');
+
+            // Handle "Select All" checkbox
+            selectAllCheckbox.addEventListener('change', function() {
+                articleCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                updateBulkDeleteButton();
+            });
+
+            // Handle individual checkboxes
+            articleCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateBulkDeleteButton();
+                    updateSelectAllCheckbox();
+                });
+            });
+
+            // Update bulk delete button visibility and selected count
+            function updateBulkDeleteButton() {
+                const checkedBoxes = document.querySelectorAll('.article-checkbox:checked');
+                if (checkedBoxes.length > 0) {
+                    bulkDeleteButton.classList.remove('hidden');
+                    bulkDeleteButton.classList.add('inline-flex');
+                    selectedCountSpan.textContent = checkedBoxes.length;
+                } else {
+                    bulkDeleteButton.classList.add('hidden');
+                    bulkDeleteButton.classList.remove('inline-flex');
+                }
+            }
+
+            // Update "Select All" checkbox state
+            function updateSelectAllCheckbox() {
+                const allChecked = Array.from(articleCheckboxes).every(checkbox => checkbox.checked);
+                const someChecked = Array.from(articleCheckboxes).some(checkbox => checkbox.checked);
+                selectAllCheckbox.checked = allChecked;
+                selectAllCheckbox.indeterminate = someChecked && !allChecked;
+            }
+
+            // Handle bulk delete with AJAX
+            bulkDeleteButton.addEventListener('click', async function() {
+                const selectedArticles = Array.from(document.querySelectorAll('.article-checkbox:checked'))
+                    .map(checkbox => checkbox.value);
+
+                const result = await Swal.fire({
+                    title: 'Xác nhận xóa',
+                    html: `Bạn có chắc chắn muốn xóa <b>${selectedArticles.length}</b> bài viết đã chọn?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc2626',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Xóa',
+                    cancelButtonText: 'Hủy',
+                    showLoaderOnConfirm: true,
+                    preConfirm: async () => {
+                        try {
+                            const response = await fetch('{{ route("admin.articles.bulk-destroy") }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    selected_articles: selectedArticles,
+                                    _method: 'DELETE'
+                                })
+                            });
+
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+
+                            return await response.json();
+                        } catch (error) {
+                            Swal.showValidationMessage(`Request failed: ${error}`);
+                        }
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+                });
+
+                if (result.isConfirmed) {
+                    // Show success message
+                    await Swal.fire({
+                        title: 'Thành công!',
+                        text: `Đã xóa ${selectedArticles.length} bài viết thành công`,
+                        icon: 'success'
+                    });
+
+                    // Reload the page or remove the rows
+                    selectedArticles.forEach(id => {
+                        const row = document.querySelector(`input[value="${id}"]`).closest('tr');
+                        row.remove();
+                    });
+
+                    // Reset select all checkbox and bulk delete button
+                    selectAllCheckbox.checked = false;
+                    bulkDeleteButton.classList.add('hidden');
+
+                    // Update table if empty
+                    const tbody = document.querySelector('tbody');
+                    if (!tbody.hasChildNodes()) {
+                        location.reload(); // Reload to show empty state
+                    }
+                }
+            });
+        });
+    </script>
+@endpush

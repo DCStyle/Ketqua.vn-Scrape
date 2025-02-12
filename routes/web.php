@@ -34,6 +34,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::redirect('/', '/admin/dashboard');
 
     // Article Management
+    Route::delete('articles/bulk-destroy', [ArticleController::class, 'bulkDestroy'])->name('articles.bulk-destroy');
     Route::resource('articles', ArticleController::class);
 
     // Settings

@@ -35,7 +35,7 @@ class ArticleController extends Controller
         }
 
         $articles = $query->latest()
-            ->paginate(10)
+            ->paginate(50)
             ->withQueryString();
 
         return view('admin.articles.index', compact('articles'));
@@ -144,6 +144,52 @@ class ArticleController extends Controller
 
         return redirect()->route('admin.articles.index', ['type' => $article->is_prediction ? 'prediction' : 'normal'])
             ->with('success', 'Article deleted successfully');
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $validated = $request->validate([
+            'selected_articles' => 'required|array',
+            'selected_articles.*' => 'exists:articles,id'
+        ]);
+
+        $articles = Article::whereIn('id', $validated['selected_articles'])->get();
+        $deletedCount = 0;
+
+        DB::beginTransaction();
+        try {
+            foreach ($articles as $article) {
+                // Delete article image if exists
+                if ($article->image) {
+                    Storage::disk('public')->delete($article->image);
+                }
+
+                // Remove from sitemap
+                $sourceDomain = 'https://' . config('url_mappings.source_domain');
+                $articleUrl = url("{$sourceDomain}/tin-tuc/{$article->slug}");
+                if (!DB::table('sitemaps')->where('url', $articleUrl)->exists()) {
+                    $this->removeFromSitemap($article);
+                }
+
+                $deletedCount++;
+            }
+
+            // Delete all selected articles
+            Article::destroy($validated['selected_articles']);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => "{$deletedCount} bài viết đã được xóa thành công",
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi xóa bài viết: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     private function attachContentImages($article, $content)

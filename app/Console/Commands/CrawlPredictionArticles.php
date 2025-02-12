@@ -210,72 +210,71 @@ class CrawlPredictionArticles extends Command
             // Create a new Crawler instance
             $crawler = new Crawler($html);
 
-            // Find all article elements and reverse them
+            // Get only the first (latest) article element
             $articles = $crawler->filter('#article-list li')->each(function (Crawler $node) {
                 return $node;
             });
-            $articles = array_reverse($articles);
 
-            $this->info(sprintf('Found %d articles to process for %s', count($articles), $region['display']));
+            if (empty($articles)) {
+                $this->info("No articles found for {$region['display']}");
+                return;
+            }
 
-            foreach ($articles as $article) {
-                try {
-                    // Extract title and link
-                    $titleElement = $article->filter('h3 a');
-                    $title = $titleElement->text();
-                    $link = $titleElement->attr('href');
+            // Take only the first article (most recent)
+            $article = $articles[0];
 
-                    // Clean up the title and replace domain in title if present
-                    $title = trim(preg_replace('/\s+/', ' ', $title));
-                    $title = str_replace($this->sourceDomain, $this->targetDomain, $title);
+            try {
+                // Extract title and link
+                $titleElement = $article->filter('h3 a');
+                $title = $titleElement->text();
+                $link = $titleElement->attr('href');
 
-                    // Generate the custom slug
-                    $slug = $this->generateSlugFromTitle($title, $regionKey);
+                // Clean up the title and replace domain in title if present
+                $title = trim(preg_replace('/\s+/', ' ', $title));
+                $title = str_replace($this->sourceDomain, $this->targetDomain, $title);
 
-                    // Check if article already exists (now checking by slug too)
-                    if (Article::where('title', $title)->orWhere('slug', $slug)->exists()) {
-                        $this->info("Article already exists: $title");
-                        continue;
-                    }
+                // Generate the custom slug
+                $slug = $this->generateSlugFromTitle($title, $regionKey);
 
-                    // Get article content
-                    $content = $this->getArticleContent($link);
-
-                    if (empty($content)) {
-                        $this->warn("Empty content for article: $title");
-                        continue;
-                    }
-
-                    // Create new article
-                    $article = Article::create([
-                        'title' => $title,
-                        'content' => $content,
-                        'is_published' => true,
-                        'is_prediction' => true,
-                        'prediction_type' => $regionKey
-                    ]);
-
-                    // Update the slug
-                    $article->update(['slug' => $slug]);
-
-                    // Add the article to sitemap
-                    $this->addToSitemap($article);
-
-                    $this->info("Created new article: $title");
-                    $this->info("Generated slug: $slug");
-
-                    // Add a small delay between requests
-                    sleep(2);
-
-                } catch (\Exception $e) {
-                    $this->error("Error processing article: " . $e->getMessage());
-                    Log::error("Crawler error processing article", [
-                        'error' => $e->getMessage(),
-                        'trace' => $e->getTraceAsString(),
-                        'region' => $regionKey
-                    ]);
-                    continue;
+                // Check if article already exists (now checking by slug too)
+                if (Article::where('title', $title)->orWhere('slug', $slug)->exists()) {
+                    $this->info("Latest article already exists: $title");
+                    return;
                 }
+
+                // Get article content
+                $content = $this->getArticleContent($link);
+
+                if (empty($content)) {
+                    $this->warn("Empty content for article: $title");
+                    return;
+                }
+
+                // Create new article
+                $article = Article::create([
+                    'title' => $title,
+                    'content' => $content,
+                    'is_published' => true,
+                    'is_prediction' => true,
+                    'prediction_type' => $regionKey
+                ]);
+
+                // Update the slug
+                $article->update(['slug' => $slug]);
+
+                // Add the article to sitemap
+                $this->addToSitemap($article);
+
+                $this->info("Created new article: $title");
+                $this->info("Generated slug: $slug");
+
+            } catch (\Exception $e) {
+                $this->error("Error processing article: " . $e->getMessage());
+                Log::error("Crawler error processing article", [
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
+                    'region' => $regionKey
+                ]);
             }
 
         } catch (\Exception $e) {
