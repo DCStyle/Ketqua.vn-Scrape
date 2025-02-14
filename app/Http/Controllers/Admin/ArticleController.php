@@ -58,7 +58,7 @@ class ArticleController extends Controller
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
             'is_prediction' => 'boolean',
-            'prediction_type' => 'nullable|string|in:xsmb,xsmn,xsmt'
+            'prediction_type' => 'nullable|string|in:xsmb,xsmn,xsmt',
         ]);
 
         if (!isset($validated['is_prediction'])) {
@@ -69,6 +69,8 @@ class ArticleController extends Controller
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('articles', 'public');
         }
+
+        $validated['user_id'] = auth()->id();
 
         $article = Article::create($validated);
 

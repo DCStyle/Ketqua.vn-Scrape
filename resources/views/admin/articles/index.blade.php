@@ -81,11 +81,11 @@
                         <th class="px-6 py-3 text-left">
                             <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tiêu đề</span>
                         </th>
-                        <th class="px-6 py-3 text-left hidden md:table-cell">
-                            <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Slug</span>
-                        </th>
                         <th class="px-6 py-3 text-left hidden sm:table-cell">
                             <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Trạng thái</span>
+                        </th>
+                        <th class="px-6 py-3 text-left hidden lg:table-cell">
+                            <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Người tạo</span>
                         </th>
                         <th class="px-6 py-3 text-left hidden lg:table-cell">
                             <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Ngày tạo</span>
@@ -109,15 +109,15 @@
                                     {{ $article->title }}
                                 </div>
                             </td>
-                            <td class="px-6 py-4 hidden md:table-cell">
-                                <code class="text-sm px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded">
-                                    {{ $article->slug }}
-                                </code>
-                            </td>
                             <td class="px-6 py-4 hidden sm:table-cell">
                                 <div class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                     {{ $article->is_published ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200' }}">
                                     {{ $article->is_published ? 'Đã xuất bản' : 'Nháp' }}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 hidden lg:table-cell">
+                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                    {{ $article->user->name }}
                                 </div>
                             </td>
                             <td class="px-6 py-4 hidden lg:table-cell">

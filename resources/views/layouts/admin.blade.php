@@ -6,13 +6,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') - Admin Panel</title>
 
-    @vite(['resources/css/admin.css', 'resources/js/admin.js'])
-
-    @stack('styles')
-
     <link rel="stylesheet" href="https://atugatran.github.io/FontAwesome6Pro/css/all.min.css" >
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.1/dist/css/tom-select.css" rel="stylesheet">
+
+    @vite(['resources/css/admin.css', 'resources/js/admin.js'])
+
+    @stack('styles')
 </head>
 <body class="bg-gray-100">
 <div class="min-h-screen flex flex-col md:flex-row">

@@ -48,7 +48,7 @@
     <meta property="og:image" content="@yield('image', setting('site_og_image') ? asset(Storage::url(setting('site_og_image'))) : 'https://placehold.co/126')">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="@yield('image', setting('site_og_image') ? asset(Storage::url(setting('site_og_image'))) : 'https://placehold.co/126')">
-    <meta name="twitter:creator" content="Kết Quả Xổ Số">
+    <meta name="twitter:creator" content="{{ setting('site_creator', 'Kết Quả Xổ Số') }}">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ setting('site_favicon') ? asset(Storage::url(setting('site_favicon'))) : 'https://placehold.co/16' }}">
@@ -56,10 +56,11 @@
     <meta name="robots" content="noindex,nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
     @vite(['resources/css/app.css'])
 
     <link rel="stylesheet" href="https://atugatran.github.io/FontAwesome6Pro/css/all.min.css" >
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     @stack('styles')
 </head>

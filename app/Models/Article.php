@@ -18,6 +18,7 @@ class Article extends Model
         'title',
         'slug',
         'content',
+        'user_id',
         'image',
         'is_published',
         'meta_title',
@@ -57,6 +58,11 @@ class Article extends Model
                 $image->delete();
             });
         });
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function exceprt($length = 200)
