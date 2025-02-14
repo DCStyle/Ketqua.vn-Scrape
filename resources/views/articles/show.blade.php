@@ -38,8 +38,8 @@
                     </div>
 
                     <!-- Article Author -->
-                    <div class="article-author text-right mt-4">
-                        <div class="author-info">
+                    <div class="article-author px-4">
+                        <div class="d-flex justify-content-end">
                             <h4 class="author-name text-sm text-gray-600">
                                 {{ $article->user->name }}
                             </h4>
