@@ -37,6 +37,13 @@
                         {!! $article->content !!}
                     </div>
 
+                    <!-- Article Author -->
+                    <div class="article-author">
+                        <div class="author-info">
+                            <h4 class="author-name">{{ $article->user->name }}</h4>
+                        </div>
+                    </div>
+
                     <!-- Article Footer -->
                     <footer class="article-footer">
                         <div class="share-buttons">
