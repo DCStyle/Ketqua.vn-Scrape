@@ -38,9 +38,11 @@
                     </div>
 
                     <!-- Article Author -->
-                    <div class="article-author">
+                    <div class="article-author text-right mt-4">
                         <div class="author-info">
-                            <h4 class="author-name">{{ $article->user->name }}</h4>
+                            <h4 class="author-name text-sm text-gray-600">
+                                {{ $article->user->name }}
+                            </h4>
                         </div>
                     </div>
 
