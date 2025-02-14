@@ -196,12 +196,10 @@ class ContentController extends Controller
         }
 
         // Build metadata array
-        $metadata = [
-            'title' => $customTitle ?? $metadata['title'] ?? setting('site_name'),
-            'description' => $customDescription ?? $metadata['description'] ?? setting('site_description'),
-            'keywords' => $metadata['keywords'] ?? setting('site_keywords'),
-            'canonical' => url()->current()
-        ];
+        $metadata['title'] = $customTitle ?? $metadata['title'] ?? setting('site_name');
+        $metadata['description'] = $customDescription ?? $metadata['description'] ?? setting('site_description');
+        $metadata['keywords'] = $metadata['keywords'] ?? setting('site_keywords');
+        $metadata['canonical'] = url()->current();
 
         $viewData = $result['data'] ?? [];
 
