@@ -6,6 +6,7 @@ use App\Models\Article;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\DomCrawler\Crawler;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -252,15 +253,14 @@ class CrawlPredictionArticles extends Command
     protected function crawlRegion($regionKey, $region)
     {
         try {
-            // We directly fetch the region's URL; remove "?page=1" if that doesn't apply
+            // 1. Fetch the region URL
             $response = $this->client->get($this->baseUrl . $region['url']);
             $html = $response->getBody()->getContents();
 
             $crawler = new Crawler($html);
 
-            // Adjust this selector to match how articles are listed on xosothantai.mobi
-            // In your original code, you had "#article-list li".
-            // Update as needed for the new site structure:
+            // 2. Adjust the selector as needed to find your article list items
+            //    For example, "#article-list li". If your structure is different, update accordingly.
             $articles = $crawler->filter('#article-list li')->each(function (Crawler $node) {
                 return $node;
             });
@@ -270,47 +270,46 @@ class CrawlPredictionArticles extends Command
                 return;
             }
 
-            // Take only the first article (most recent)
-            $article = $articles[0];
+            // 3. Take only the first article (most recent)
+            $articleNode = $articles[0];
 
             try {
-                // Extract title and link from the new site structure
-                // For example, if the markup has: <h3><a href="...">Title</a></h3>
-                // Adjust the selector as needed:
-                $titleElement = $article->filter('h3 a');
+                // --- TITLE & LINK ---
+                // 4. Extract title and link. Adjust selector to your structure (e.g. 'h3 a').
+                $titleElement = $articleNode->filter('h3 a');
                 $title = $titleElement->text();
                 $link = $titleElement->attr('href');
 
                 $title = trim(preg_replace('/\s+/', ' ', $title));
                 $title = str_replace($this->sourceDomain, $this->targetDomain, $title);
 
-                // Generate a custom slug
+                // --- GENERATE SLUG ---
                 $slug = $this->generateSlugFromTitle($title, $regionKey);
 
-                // Check if this article already exists in our DB
+                // 5. Check if this article already exists
                 if (Article::where('title', $title)->orWhere('slug', $slug)->exists()) {
                     $this->info("Latest article already exists: $title");
                     return;
                 }
 
-                // Get the content of the article
+                // --- GET CONTENT ---
                 $content = $this->getArticleContent($link);
-
                 if (empty($content)) {
                     $this->warn("Empty content for article: $title");
                     return;
                 }
 
-                // Create the new article record
+                // --- CREATE ARTICLE ---
                 $article = Article::create([
-                    'title' => $title,
-                    'content' => $content,
-                    'is_published' => true,
-                    'is_prediction' => true,
-                    'prediction_type' => $regionKey
+                    'title'           => $title,
+                    'content'         => $content,
+                    'is_published'    => true,
+                    'is_prediction'   => true,
+                    'prediction_type' => $regionKey,
+                    'image'           => null
                 ]);
 
-                // Update slug
+                // Update slug if needed
                 $article->update(['slug' => $slug]);
 
                 // Add to sitemap
@@ -322,16 +321,16 @@ class CrawlPredictionArticles extends Command
             } catch (\Exception $e) {
                 $this->error("Error processing article: " . $e->getMessage());
                 Log::error("Crawler error processing article", [
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
+                    'error'  => $e->getMessage(),
+                    'trace'  => $e->getTraceAsString(),
                     'region' => $regionKey
                 ]);
             }
         } catch (\Exception $e) {
             $this->error("Fatal error processing {$region['display']}: " . $e->getMessage());
             Log::error("Crawler fatal error", [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'error'  => $e->getMessage(),
+                'trace'  => $e->getTraceAsString(),
                 'region' => $regionKey
             ]);
         }

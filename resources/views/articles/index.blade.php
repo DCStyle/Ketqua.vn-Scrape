@@ -8,7 +8,7 @@
                     <article class="card article-card mb-4" data-aos="fade-up">
                         <div class="row g-0">
                             <div class="col-md-4 article-image-wrapper">
-                                <img src="{{ $article->image ? Storage::url($article->image) : 'https://placehold.co/300' }}"
+                                <img src="{{ $article->getThumbnail() }}"
                                      alt="{{ $article->title }}"
                                      class="article-image"
                                 >

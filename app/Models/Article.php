@@ -98,4 +98,29 @@ class Article extends Model
     {
         return $this->morphMany(Image::class, 'imageable');
     }
+
+    public function getThumbnail()
+    {
+        // First check if the article has an image
+        if ($this->image) {
+            return Storage::url($this->image);
+        }
+
+        // If not, check if the article has any images
+        if ($this->images->count() > 0) {
+            return Storage::url($this->images->first()->path);
+        }
+
+        // If not, check if article content contains any images
+        $matches = [];
+        preg_match_all('/<img[^>]+>/i', $this->content, $matches);
+        if (count($matches) > 0) {
+            $img = $matches[0][0];
+            preg_match('/src="([^"]+)"/', $img, $src);
+            return $src[1];
+        }
+
+        // If not, return a default image
+        return 'https://placeholder.co/300';
+    }
 }
