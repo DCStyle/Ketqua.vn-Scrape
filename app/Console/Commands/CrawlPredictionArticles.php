@@ -8,30 +8,41 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\DomCrawler\Crawler;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class CrawlPredictionArticles extends Command
 {
     protected $signature = 'crawl:predictions {region?}';
-    protected $description = 'Crawl lottery prediction articles from dubaoketqua.net';
+    protected $description = 'Crawl lottery prediction articles from xosothantai.mobi';
 
     protected $client;
-    protected $baseUrl = 'https://dubaoketqua.net';
-    protected $targetDomain = 'kqxshn.org';
-    protected $sourceDomain = 'dubaoketqua.net';
 
+    /**
+     * Now using xosothantai.mobi as our baseUrl and sourceDomain.
+     */
+    protected $baseUrl = 'https://xosothantai.mobi';
+    protected $targetDomain = 'kqxshn.org';
+    protected $sourceDomain = 'xosothantai.mobi';
+
+    /**
+     * Updated region URLs:
+     *  - xsmb → /du-doan-xsmb-c228.html
+     *  - xsmt → /du-doan-xsmt-c224.html
+     *  - xsmn → /du-doan-xsmn-c226.html
+     */
     protected $regions = [
         'xsmb' => [
-            'url' => '/du-doan-xsmb',
+            'url' => '/du-doan-xsmb-c228.html',
             'type' => 'xsmb',
             'display' => 'XSMB'
         ],
         'xsmt' => [
-            'url' => '/du-doan-xsmt',
+            'url' => '/du-doan-xsmt-c224.html',
             'type' => 'xsmt',
             'display' => 'XSMT'
         ],
         'xsmn' => [
-            'url' => '/du-doan-xsmn',
+            'url' => '/du-doan-xsmn-c226.html',
             'type' => 'xsmn',
             'display' => 'XSMN'
         ]
@@ -44,7 +55,9 @@ class CrawlPredictionArticles extends Command
             'verify' => false,
             'timeout' => 30,
             'headers' => [
-                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                    . 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 '
+                    . 'Safari/537.36'
             ]
         ]);
     }
@@ -52,9 +65,13 @@ class CrawlPredictionArticles extends Command
     public function handle()
     {
         $requestedRegion = $this->argument('region');
-        $regionsToProcess = $requestedRegion ?
-            array_filter($this->regions, fn($key) => $key === $requestedRegion, ARRAY_FILTER_USE_KEY) :
-            $this->regions;
+        $regionsToProcess = $requestedRegion
+            ? array_filter(
+                $this->regions,
+                fn($key) => $key === $requestedRegion,
+                ARRAY_FILTER_USE_KEY
+            )
+            : $this->regions;
 
         foreach ($regionsToProcess as $regionKey => $region) {
             $this->info("Starting to crawl {$region['display']} prediction articles...");
@@ -70,6 +87,13 @@ class CrawlPredictionArticles extends Command
         return 0;
     }
 
+    /**
+     * Updated to:
+     *  1) Use #article-content instead of .the-article-content
+     *  2) Collect only <p>, <h1>, <h2>, <h3>, <table.th_picture>
+     *  3) Skip <p><strong>Bài viết cũ hơn:</strong></p> + its next <p>
+     *  4) Remove all <a>...</a>, keeping only text
+     */
     protected function getArticleContent($url): string
     {
         try {
@@ -77,45 +101,64 @@ class CrawlPredictionArticles extends Command
             $html = $response->getBody()->getContents();
 
             $crawler = new Crawler($html);
+
+            // Target the container #article-content
+            $articleContent = $crawler->filter('#article-content');
+            if (!$articleContent->count()) {
+                // If there's no such container, bail out
+                return '';
+            }
+
+            // 4) Remove links from the DOM so that we only keep text.
+            $articleContent->filter('a')->each(function (Crawler $link) {
+                // Replace the <a> node with a text node containing its text content
+                $link->getNode(0)->parentNode->replaceChild(
+                    $link->getNode(0)->ownerDocument->createTextNode($link->text()),
+                    $link->getNode(0)
+                );
+            });
+
+            // 2) Grab only <p>, <h1>, <h2>, <h3>, <table.th_picture> within #article-content
+            $contentNodes = $articleContent->filter('p, h1, h2, h3, table.th_picture');
+
             $content = [];
+            $skipNextParagraph = false;
 
-            // Get the article content container
-            $articleContent = $crawler->filter('.the-article-content');
+            $contentNodes->each(function (Crawler $node) use (&$content, &$skipNextParagraph) {
+                // Convert the node to HTML
+                $nodeHtml = $node->outerHtml();
+                $nodeText = trim($node->text());
 
-            // Process headings (h2, h3)
-            $headings = $articleContent->filter('h2, h3')->each(function (Crawler $node) {
-                return $node->outerHtml();
+                // 3) Skip <p><strong>Bài viết cũ hơn:</strong></p> and its NEXT <p>
+                //    If we see that text, we set a flag to skip the next <p>.
+                if (Str::lower($nodeText) === 'bài viết cũ hơn:') {
+                    // This is the <p><strong>Bài viết cũ hơn:</strong></p>
+                    // so do not add it, and skip the next <p> as well
+                    $skipNextParagraph = true;
+                    return; // do not push this one into $content
+                }
+
+                // If the previous node triggered skip, and this node is a <p>, skip it
+                // (You can refine this check if you only want to skip *exactly* a <p>).
+                if ($skipNextParagraph && $node->nodeName() === 'p') {
+                    $skipNextParagraph = false; // skip it only once
+                    return;
+                }
+
+                // Add this element only if it has some non-empty text
+                if (!empty(strip_tags($nodeHtml))) {
+                    $content[] = $nodeHtml;
+                }
             });
-            $content = array_merge($content, $headings);
 
-            // Process paragraphs without class
-            $paragraphs = $articleContent->filter('p:not([class])')->each(function (Crawler $node) {
-                return $node->outerHtml();
-            });
-            $content = array_merge($content, $paragraphs);
-
-            // Process specific div classes
-            $divs = $articleContent->filter('div.box, div.table_dudoan_wrapper, div.pascal')->each(function (Crawler $node) {
-                return $node->outerHtml();
-            });
-            $content = array_merge($content, $divs);
-
-            // Filter out empty elements and join
-            $content = array_filter($content, function($element) {
-                return !empty(trim(strip_tags($element)));
-            });
-
-            // Convert array to HTML string
+            // Join everything into a single HTML string
             $htmlContent = implode("\n", $content);
 
-            // Replace source domain with target domain in URLs and text
+            // Replace domain occurrences if needed (same logic as before)
             $htmlContent = $this->replaceDomains($htmlContent);
 
-            // Add special handling for <br> tags
-            $htmlContent = str_replace(['<br>', '<br/>', '<br />'], "\n", $htmlContent);
-
+            // Return the final article content
             return $htmlContent;
-
         } catch (\Exception $e) {
             Log::error("Error getting article content", [
                 'url' => $url,
@@ -125,22 +168,26 @@ class CrawlPredictionArticles extends Command
         }
     }
 
+    /**
+     * Replace only visible text occurrences of $this->sourceDomain
+     * with $this->targetDomain, ignoring all attributes like src/href.
+     */
     protected function replaceDomains($content): string
     {
-        // Replace in URLs (href and src attributes)
-        $patterns = [
-            '/(href=[\'"](https?:\/\/)?)' . preg_quote($this->sourceDomain, '/') . '/i',
-            '/(src=[\'"](https?:\/\/)?)' . preg_quote($this->sourceDomain, '/') . '/i',
-            '/(' . preg_quote($this->sourceDomain, '/') . ')/i'
-        ];
+        // Using a regex that finds text between closing and opening tags
+        // > TEXT <
+        // and applying a callback that replaces the domain only there.
+        $content = preg_replace_callback('/>([^<]+)</u', function ($matches) {
+            $text = $matches[1];
 
-        foreach ($patterns as $pattern) {
-            $content = preg_replace($pattern, '${1}' . $this->targetDomain, $content);
-        }
+            // Replace the domain in visible text only
+            $replaced = str_replace($this->sourceDomain, $this->targetDomain, $text);
 
-        // Replace in text content
-        $content = str_replace($this->sourceDomain . $this->targetDomain, $this->targetDomain, $content);
-        $content = str_replace($this->sourceDomain, $this->targetDomain, $content);
+            $replaced = str_replace('Xosothantai.mobi', $this->targetDomain, $replaced);
+
+            // Return the text in between angle brackets exactly as captured
+            return ">$replaced<";
+        }, $content);
 
         return $content;
     }
@@ -192,25 +239,28 @@ class CrawlPredictionArticles extends Command
 
             // Create the slug in the format: du-doan-xsmb-01-02-2025
             $slug = "du-doan-" . strtolower($regionKey) . "-{$day}-{$month}-{$year}";
-
             return $slug;
         }
 
         // Fallback to a safe slug if no date is found
-        return \Str::slug($title);
+        return Str::slug($title);
     }
 
+    /**
+     * Main region crawler logic
+     */
     protected function crawlRegion($regionKey, $region)
     {
         try {
-            // Get the main page content
-            $response = $this->client->get($this->baseUrl . $region['url'] . '?page=1');
+            // We directly fetch the region's URL; remove "?page=1" if that doesn't apply
+            $response = $this->client->get($this->baseUrl . $region['url']);
             $html = $response->getBody()->getContents();
 
-            // Create a new Crawler instance
             $crawler = new Crawler($html);
 
-            // Get only the first (latest) article element
+            // Adjust this selector to match how articles are listed on xosothantai.mobi
+            // In your original code, you had "#article-list li".
+            // Update as needed for the new site structure:
             $articles = $crawler->filter('#article-list li')->each(function (Crawler $node) {
                 return $node;
             });
@@ -224,25 +274,26 @@ class CrawlPredictionArticles extends Command
             $article = $articles[0];
 
             try {
-                // Extract title and link
+                // Extract title and link from the new site structure
+                // For example, if the markup has: <h3><a href="...">Title</a></h3>
+                // Adjust the selector as needed:
                 $titleElement = $article->filter('h3 a');
                 $title = $titleElement->text();
                 $link = $titleElement->attr('href');
 
-                // Clean up the title and replace domain in title if present
                 $title = trim(preg_replace('/\s+/', ' ', $title));
                 $title = str_replace($this->sourceDomain, $this->targetDomain, $title);
 
-                // Generate the custom slug
+                // Generate a custom slug
                 $slug = $this->generateSlugFromTitle($title, $regionKey);
 
-                // Check if article already exists (now checking by slug too)
+                // Check if this article already exists in our DB
                 if (Article::where('title', $title)->orWhere('slug', $slug)->exists()) {
                     $this->info("Latest article already exists: $title");
                     return;
                 }
 
-                // Get article content
+                // Get the content of the article
                 $content = $this->getArticleContent($link);
 
                 if (empty($content)) {
@@ -250,7 +301,7 @@ class CrawlPredictionArticles extends Command
                     return;
                 }
 
-                // Create new article
+                // Create the new article record
                 $article = Article::create([
                     'title' => $title,
                     'content' => $content,
@@ -259,10 +310,10 @@ class CrawlPredictionArticles extends Command
                     'prediction_type' => $regionKey
                 ]);
 
-                // Update the slug
+                // Update slug
                 $article->update(['slug' => $slug]);
 
-                // Add the article to sitemap
+                // Add to sitemap
                 $this->addToSitemap($article);
 
                 $this->info("Created new article: $title");
@@ -276,7 +327,6 @@ class CrawlPredictionArticles extends Command
                     'region' => $regionKey
                 ]);
             }
-
         } catch (\Exception $e) {
             $this->error("Fatal error processing {$region['display']}: " . $e->getMessage());
             Log::error("Crawler fatal error", [
