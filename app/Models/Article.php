@@ -115,7 +115,7 @@ class Article extends Model
         $matches = [];
         preg_match_all('/<img[^>]+>/i', $this->content, $matches);
         if (count($matches) > 0) {
-            $img = $matches[0][0];
+            $img = (isset($matches[0][0])) ? $matches[0][0] : '';
             preg_match('/src="([^"]+)"/', $img, $src);
             return $src[1];
         }
