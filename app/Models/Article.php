@@ -90,7 +90,7 @@ class Article extends Model
         return new SEOData(
             title: $this->meta_title && $this->meta_title !== '' ? $this->meta_title : $this->title,
             description: $this->meta_description && $this->meta_description !== '' ? $this->meta_description : $this->exceprt(),
-            image: Storage::url($this->image)
+            image: $this->getThumbnail()
         );
     }
 

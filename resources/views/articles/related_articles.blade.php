@@ -4,7 +4,7 @@
     @foreach($relatedArticles as $article)
         <div class="related-card">
             <div class="related-image">
-                <img src="{{ $article->image ? Storage::url($article->image) : 'https://placehold.co/200' }}" alt="{{ $article->title }}">
+                <img src="{{ $article->getThumbnail() }}" alt="{{ $article->title }}">
             </div>
             <div class="related-content">
                 <h4 class="related-heading">
