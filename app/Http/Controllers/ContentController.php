@@ -172,26 +172,32 @@ class ContentController extends Controller
             $currentPath .= '/';
         }
 
-        // Get custom path settings
-        $pathTitles = setting('site_path_title') ? json_decode(setting('site_path_title'), true) : [];
-        $pathDescriptions = setting('site_path_description') ? json_decode(setting('site_path_description'), true) : [];
+        if ($currentPath == '/')
+        {
+            $customTitle = setting('site_name');
+            $customDescription = setting('site_description');
+        } else {
+            // Get custom path settings
+            $pathTitles = setting('site_path_title') ? json_decode(setting('site_path_title'), true) : [];
+            $pathDescriptions = setting('site_path_description') ? json_decode(setting('site_path_description'), true) : [];
 
-        // Try to find matching path in settings
-        $customTitle = null;
-        $customDescription = null;
+            // Try to find matching path in settings
+            $customTitle = null;
+            $customDescription = null;
 
-        foreach ($pathTitles as $index => $titleData) {
-            $settingPath = array_key_first($titleData);
+            foreach ($pathTitles as $index => $titleData) {
+                $settingPath = array_key_first($titleData);
 
-            // Check if current path matches the setting path
-            if ($currentPath === $settingPath || rtrim($currentPath, '/') === rtrim($settingPath, '/')) {
-                $customTitle = $titleData[$settingPath];
+                // Check if current path matches the setting path
+                if ($currentPath === $settingPath || rtrim($currentPath, '/') === rtrim($settingPath, '/')) {
+                    $customTitle = $titleData[$settingPath];
 
-                // Get matching description if it exists
-                if (isset($pathDescriptions[$index][$settingPath])) {
-                    $customDescription = $pathDescriptions[$index][$settingPath];
+                    // Get matching description if it exists
+                    if (isset($pathDescriptions[$index][$settingPath])) {
+                        $customDescription = $pathDescriptions[$index][$settingPath];
+                    }
+                    break;
                 }
-                break;
             }
         }
 
