@@ -30,6 +30,12 @@ class ArticleController extends Controller
             abort(404);
         }
 
+        $typeTitle = match ($type) {
+            'xsmb' => 'Dự đoán kết quả XSMB',
+            'xsmt' => 'Dự đoán kết quả XSMT',
+            'xsmn' => 'Dự đoán kết quả XSMN',
+        };
+
         // Get latest paginated prediction articles
         $latestArticles = Article::latest()
             ->where('is_published', 1)
@@ -43,7 +49,7 @@ class ArticleController extends Controller
             $customMetadata['description'] ?? null
         );
 
-        return view('articles.prediction', compact('latestArticles', 'SEOData'));
+        return view('articles.prediction', compact('typeTitle', 'latestArticles', 'SEOData'));
     }
 
     public function show(Article $article)
