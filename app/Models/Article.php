@@ -117,10 +117,10 @@ class Article extends Model
         if (count($matches) > 0) {
             $img = (isset($matches[0][0])) ? $matches[0][0] : '';
             preg_match('/src="([^"]+)"/', $img, $src);
-            return $src[1] ?? 'https://placehold.co/300';
+            return $src[1] ?? 'https://placehold.co/300?text=' . urlencode($this->title);
         }
 
         // If not, return a default image
-        return 'https://placehold.co/300';
+        return 'https://placehold.co/300?text=' . urlencode($this->title);
     }
 }
