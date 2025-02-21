@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class ArticleController extends Controller
 {
@@ -14,7 +15,13 @@ class ArticleController extends Controller
             ->where('is_prediction', false)
             ->paginate(10);
 
-        return view('articles.index', compact('latestArticles'));
+        $customMetadata = $this->getMetadata();
+        $SEOData = new SEOData(
+            $customMetadata['title'] ?? null,
+            $customMetadata['description'] ?? null
+        );
+
+        return view('articles.index', compact('latestArticles', 'SEOData'));
     }
 
     public function prediction($type)
@@ -30,7 +37,13 @@ class ArticleController extends Controller
             ->where('prediction_type', $type)
             ->paginate(10);
 
-        return view('articles.prediction', compact('latestArticles'));
+        $customMetadata = $this->getMetadata();
+        $SEOData = new SEOData(
+            $customMetadata['title'] ?? null,
+            $customMetadata['description'] ?? null
+        );
+
+        return view('articles.prediction', compact('latestArticles', 'SEOData'));
     }
 
     public function show(Article $article)
