@@ -19,17 +19,54 @@
 
                     <!-- Article Header -->
                     <header class="article-header">
+                        <!-- Breadcrumb -->
+                        <nav aria-label="breadcrumb" class="mb-2">
+                            <ol class="breadcrumb mb-0 txt-sub-content" itemscope itemtype="https://schema.org/BreadcrumbList">
+                                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                                    <a class="text-decoration-none" itemprop="item" href="https://kqxshn.org" title="Kết quả">
+                                        <span itemprop="name">Kết quả</span>
+                                        <meta itemprop="position" content="1">
+                                    </a>
+                                </li>
+
+                                @if($isPrediction)
+                                    <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                                        <a class="text-decoration-none" itemprop="item" href="{{ route('articles.prediction', ['type' => $article->prediction_type]) }}" title="{{ $predictionTypeTitle }}">
+                                            <span itemprop="name">{{ $predictionTypeTitle }}</span>
+                                            <meta itemprop="position" content="2">
+                                        </a>
+                                    </li>
+                                @else
+                                    <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                                        <a class="text-decoration-none" itemprop="item" href="{{ route('articles.index') }}" title="Tin tức">
+                                            <span itemprop="name">Tin tức</span>
+                                            <meta itemprop="position" content="2">
+                                        </a>
+                                    </li>
+                                @endif
+
+                                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                                    <span itemprop="name">{{ $article->title }}</span>
+                                    <meta itemprop="position" content="3">
+                                </li>
+                            </ol>
+                        </nav>
+
                         <div class="article-meta mb-2">
-                       <span class="meta-item">
-                           <i class="fas fa-calendar"></i>
-                           {{ $article->created_at->format('M d, Y') }}
-                       </span>
                             <span class="meta-item">
-                           <i class="fas fa-clock"></i>
-                           {{ $article->readTime() }}
-                       </span>
+                                <i class="fas fa-calendar"></i>
+                                {{ $article->created_at->format('M d, Y') }}
+                            </span>
+
+                            <span class="meta-item">
+                                <i class="fas fa-clock"></i>
+                                {{ $article->readTime() }}
+                            </span>
                         </div>
-                        <h1 class="article-title">{{ $article->title }}</h1>
+
+                        <h1 class="article-title">
+                            {{ $article->title }}
+                        </h1>
                     </header>
 
                     <!-- Article Content -->

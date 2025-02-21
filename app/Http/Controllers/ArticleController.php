@@ -71,8 +71,17 @@ class ArticleController extends Controller
             $relatedArticles = $relatedArticles
                 ->where('is_prediction', 1)
                 ->where('prediction_type', $article->prediction_type);
+
+            $isPrediction = true;
+            $predictionTypeTitle = match ($article->prediction_type) {
+                'xsmb' => 'Dự đoán kết quả XSMB',
+                'xsmt' => 'Dự đoán kết quả XSMT',
+                'xsmn' => 'Dự đoán kết quả XSMN',
+            };
         } else {
             $relatedArticles = $relatedArticles->where('is_prediction', 0);
+            $isPrediction = false;
+            $predictionTypeTitle = null;
         }
 
         $relatedArticles = $relatedArticles->where('is_published', 1)
@@ -80,6 +89,11 @@ class ArticleController extends Controller
             ->limit(5)
             ->get();
 
-        return view('articles.show', compact('article', 'relatedArticles'));
+        return view('articles.show', compact(
+            'article',
+            'isPrediction',
+            'predictionTypeTitle',
+            'relatedArticles'
+        ));
     }
 }
