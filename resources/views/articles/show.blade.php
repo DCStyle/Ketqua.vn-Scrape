@@ -24,7 +24,7 @@
                             <ol class="breadcrumb mb-0 txt-sub-content" itemscope itemtype="https://schema.org/BreadcrumbList">
                                 <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
                                     <a class="text-decoration-none" itemprop="item"
-                                       href="{{ config('url') }}"
+                                       href="{{ config('app.url') }}"
                                        title="Kết quả">
                                         <span itemprop="name">Kết quả</span>
                                         <meta itemprop="position" content="1">
