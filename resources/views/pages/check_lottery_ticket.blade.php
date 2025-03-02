@@ -123,7 +123,7 @@
             formData.append('search_number', $('input[name="search_number"]').val() || '');
 
             $.ajax({
-                url: 'https://ketqua5s.com/?url=' + btoa('https://ketqua.vn/do-ve-so'),
+                url: 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/do-ve-so'),
                 data: formData.toString(),
                 type: "post",
                 contentType: 'application/x-www-form-urlencoded; charset=UTF-8',

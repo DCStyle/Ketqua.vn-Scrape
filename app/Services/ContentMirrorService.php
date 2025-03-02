@@ -174,7 +174,7 @@ class ContentMirrorService
 
     private function sendRequest(string $url, array $params, string $method): \Illuminate\Http\Client\Response
     {
-        $proxyUrl = 'https://ketqua5s.com';
+        $proxyUrl = 'https://caykeongot.com/proxy';
         $encodedUrl = base64_encode(rtrim($url, '/'));
 
         $proxyRequest = Http::timeout(300);
