@@ -82,6 +82,8 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 Route::get('/{path}.xml', [SitemapController::class, 'show'])->where('path', '.*');
 
 // RSS feed
+Route::get('/rss', [RssController::class, 'rss'])->name('rss.rss');
+Route::get('/{path}.rss', [RssController::class, 'rss'])->where('path', '.*');
 Route::get('/feed', [RssController::class, 'index'])->name('rss.index');
 Route::get('/feed/{category}', [RssController::class, 'category'])->name('rss.category');
 
