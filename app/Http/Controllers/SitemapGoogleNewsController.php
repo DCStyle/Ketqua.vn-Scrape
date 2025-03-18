@@ -16,7 +16,7 @@ class SitemapGoogleNewsController extends Controller
                 return [
                     'title' => $article->title,
                     'link' => route('articles.show', $article->slug),
-                    'image' => $article->image ? asset(Storage::url($article->image)) : 'https://placehold.co/126',
+                    'image' => $article->getThumbnail(),
                     'published' => \Illuminate\Support\Carbon::parse($article->created_at)
                         ->setTimezone('Asia/Ho_Chi_Minh')
                         ->toW3cString(),
