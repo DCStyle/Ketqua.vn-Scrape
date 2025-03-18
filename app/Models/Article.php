@@ -103,7 +103,7 @@ class Article extends Model
     {
         // First check if the article has an image
         if ($this->image) {
-            return Storage::url($this->image);
+            return env('APP_ENV') == 'production' ? secure_asset('storage/' . $this->image) : asset('storage/' . $this->image);
         }
 
         // If not, check if the article has any images
