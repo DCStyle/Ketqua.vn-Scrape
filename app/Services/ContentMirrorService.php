@@ -199,7 +199,7 @@ class ContentMirrorService
         });
 
         // Remove lottery checking form
-        $crawler->filter('.br-10.table-shadow.overflow-hidden.m-b-15.bg-white')->each(function ($node) {
+        $crawler->filter('.list-group.list-group-custom.br-sm.bd-light.overflow-hidden.m-b-15')->each(function ($node) {
             try {
                 $link = $node->filter('h3 a');
                 if ($link->count() > 0 && trim($link->text()) === 'Dò Vé Số') {
@@ -211,10 +211,10 @@ class ContentMirrorService
         });
 
         // Remove articles block
-        $crawler->filter('.list-group.list-group-custom.br-10.table-shadow.overflow-hidden.m-b-15')->each(function ($node) {
+        $crawler->filter('.list-group.list-group-custom.br-sm.bd-light.overflow-hidden.m-b-15')->each(function ($node) {
            try {
                $link = $node->filter('h3 a');
-               if ($link->count() > 0 && trim($link->text()) === 'Tin xổ số') {
+               if ($link->count() > 0 && trim($link->text()) === 'Tin tức xổ số') {
                    $node->getNode(0)->parentNode->removeChild($node->getNode(0));
                }
            }  catch (\Exception $e) {

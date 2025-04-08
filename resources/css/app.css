@@ -1,5 +1,9 @@
 @import "all.css";
 
+#drawl_ball, #draw_label {
+    display: none !important;
+}
+
 .error-message {
     color: #dc3545;
     display: none;

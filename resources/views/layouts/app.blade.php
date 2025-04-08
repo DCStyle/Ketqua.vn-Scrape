@@ -46,7 +46,7 @@
 
     @vite(['resources/css/app.css'])
 
-    <link rel="stylesheet" href="https://atugatran.github.io/FontAwesome6Pro/css/all.min.css" >
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aquawolf04/font-awesome-pro@5cd1511/css/all.css">
 
     @stack('styles')
 </head>

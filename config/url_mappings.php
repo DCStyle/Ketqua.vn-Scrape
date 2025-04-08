@@ -11,9 +11,9 @@ return [
         ]
     ],
     'default_scrape' => [
-        'source_url' => 'https://ketqua.vn',
+        'source_url' => 'https://xskt.net',
         'main_selector' => '.container.max-w-1140px.position-relative',
         'template' => 'scrape.default'
     ],
-    'source_domain' => 'ketqua.vn'
+    'source_domain' => 'xskt.net'
 ];

@@ -15355,7 +15355,8 @@ figure figcaption {
 }
 .list-group-title {
     padding: 8px 20px;
-    color: #fff;
+    color: #333;
+    background: #fff1ca;
 }
 .table-calendar table {
     table-layout: fixed;
