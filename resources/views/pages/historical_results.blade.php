@@ -108,7 +108,7 @@
             formData.append('province_id', provinceId);
 
             $.ajax({
-                url: 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/so-ket-qua'),
+                url: 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/so-ket-qua'),
                 data: formData.toString(),
                 type: "post",
                 contentType: 'application/x-www-form-urlencoded; charset=UTF-8',

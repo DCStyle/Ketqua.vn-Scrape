@@ -177,7 +177,7 @@
             const diw = diwElement ? diwElement.value : '';
             const button = e;
 
-            let baseUrl = 'https://ketqua.vn/';
+            let baseUrl = 'https://xskt.net/';
             let path = '';
 
             switch (type) {
@@ -276,7 +276,7 @@
             }
 
             if (valid) {
-                const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/soi-cau/giai-dac-biet');
+                const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/soi-cau/giai-dac-biet');
                 const formData = new URLSearchParams();
                 formData.append('date_range', range);
                 formData.append('end_date', endDate);
@@ -338,7 +338,7 @@
             }
 
             if (valid) {
-                const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/soi-cau/giai-dac-biet-theo-thu');
+                const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/soi-cau/giai-dac-biet-theo-thu');
                 const formData = new URLSearchParams();
                 formData.append('province', province);
                 formData.append('date_range', range);
@@ -396,7 +396,7 @@
             }
 
             if (valid) {
-                const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/soi-cau/tam-giac');
+                const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/soi-cau/tam-giac');
                 const formData = new URLSearchParams();
                 formData.append('end_date', endDate);
                 formData.append('date_range', dateRange);

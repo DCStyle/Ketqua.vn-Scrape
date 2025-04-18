@@ -16,7 +16,7 @@ function TKLTG(e) {
     }
 
     if (valid) {
-        const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/thong-ke/loto-gan');
+        const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/thong-ke/loto-gan');
         const formData = new URLSearchParams();
         formData.append('province', provinceId);
         formData.append('range', range);
@@ -69,7 +69,7 @@ function TKCKDLT(e) {
     }
 
     if (valid) {
-        const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/thong-ke/chu-ky-dan-loto');
+        const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/thong-ke/chu-ky-dan-loto');
         const formData = new URLSearchParams();
         formData.append('range', dateRange);
         formData.append('numbers', numbers);
@@ -124,7 +124,7 @@ function TKN(e) {
     }
 
     if (valid) {
-        const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/thong-ke/ket-qua-xo-so');
+        const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/thong-ke/ket-qua-xo-so');
         const formData = new URLSearchParams();
         formData.append('numbers', numbers);
         formData.append('province', provinceId);
@@ -166,7 +166,7 @@ function TKDDLT(e) {
         return false;
     }
 
-    const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/thong-ke/dau-duoi-loto');
+    const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/thong-ke/dau-duoi-loto');
     const formData = new URLSearchParams();
     formData.append('date_range', dateRange);
     formData.append('province', provinceId);
@@ -218,7 +218,7 @@ function TKCKDDB(e) {
     }
 
     if (valid) {
-        const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/thong-ke/chu-ky-dan-dac-biet');
+        const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/thong-ke/chu-ky-dan-dac-biet');
         const formData = new URLSearchParams();
         formData.append('range', dateRange);
         formData.append('numbers', numbers);
@@ -270,7 +270,7 @@ function TKTSLT(e) {
     }
 
     if (valid) {
-        const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/thong-ke/tan-suat-loto');
+        const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/thong-ke/tan-suat-loto');
         const formData = new URLSearchParams();
         formData.append('province', provinceId);
         formData.append('date_range', dateRange);
@@ -310,7 +310,7 @@ function TC(e) {
         return;
     }
 
-    const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/thong-ke/cang-loto');
+    const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/thong-ke/cang-loto');
     const formData = new URLSearchParams();
     formData.append('number', number);
     formData.append('date_range', document.getElementById('tc_date_range').value);
@@ -351,7 +351,7 @@ function TKTT(e) {
         return false;
     }
 
-    const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/thong-ke/theo-tong');
+    const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/thong-ke/theo-tong');
     const formData = new URLSearchParams();
     formData.append('sum', document.getElementById('tktt_sum').value);
     formData.append('province_id', provinceId);
@@ -385,7 +385,7 @@ function TKQT(e) {
     const provinceId = document.getElementById('tkqt_province_id').value;
     const button = e;
 
-    const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/thong-ke/quan-trong');
+    const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/thong-ke/quan-trong');
     const formData = new URLSearchParams();
     formData.append('province_id', provinceId);
     formData.append('type', type);
@@ -418,7 +418,7 @@ function BDBT(e) {
     const type = document.querySelector('input[name="bdbt_type"]:checked').value;
     const button = e;
 
-    const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/thong-ke/dac-biet-tuan');
+    const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/thong-ke/dac-biet-tuan');
     const formData = new URLSearchParams();
     formData.append('from_date', fromDate);
     formData.append('to_date', toDate);
@@ -460,7 +460,7 @@ function TKDN(e) {
         return false;
     }
 
-    const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/thong-ke/dai-nhat');
+    const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/thong-ke/dai-nhat');
     const formData = new URLSearchParams();
     formData.append('numbers', numbers);
     formData.append('from_date', fromDate);
@@ -508,7 +508,7 @@ function TSNLT(e) {
     }
 
     if (valid) {
-        const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/thong-ke/tan-so-nhip-loto');
+        const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/thong-ke/tan-so-nhip-loto');
         const formData = new URLSearchParams();
         formData.append('number', number);
         formData.append('from_date', fromDate);
@@ -542,7 +542,7 @@ function BDBTH(e) {
     const year = document.getElementById('bdbt_year').value;
     const button = e;
 
-    const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://ketqua.vn/thong-ke/dac-biet-thang');
+    const targetUrl = 'https://caykeongot.com/proxy/?url=' + btoa('https://xskt.net/thong-ke/dac-biet-thang');
     const formData = new URLSearchParams();
     formData.append('year', year);
 

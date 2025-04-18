@@ -85,24 +85,6 @@ var currentPage = 1;
 //    (formerly used jQuery's setTimeout + append + on-click)
 // -------------------------------------------------------
 function detectAdsBlock() {
-    // Check for ad-block after 2 seconds
-    setTimeout(function() {
-        var adBoxEl = document.querySelector(".ad-box");
-        if (adBoxEl !== null && window.getComputedStyle(adBoxEl).display === "none") {
-            var adsNoticeHTML = '<div class="modal" id="ads-block-notice">' +
-                '<div class="modal-dialog" role="document">' +
-                '<div class="modal-content">' +
-                '<div class="modal-body">' +
-                '<div class="exclamation-icon"><span class="icon"><i class="fas fa-exclamation"></i></span></div>' +
-                '<h5 class="mt-3">Phát hiện trình chặn quảng cáo</h5>' +
-                '<p>Quảng cáo là nguồn doanh thu giúp duy trì và phát triển hệ thống.</p>' +
-                '<p>Ủng hộ team ketqua.vn bằng cách bỏ chặn quảng cáo.</p>' +
-                '<button type="button" class="btn btn-success mt-2" id="ads-block-accept"><i class="fas fa-smile"></i> Tôi đồng ý</button>' +
-                '</div></div></div></div>';
-            document.body.insertAdjacentHTML('beforeend', adsNoticeHTML);
-        }
-    }, 2000);
-
     // Listen for click on #ads-block-accept (delegated)
     document.addEventListener("click", function(e) {
         if (e.target && e.target.id === "ads-block-accept") {
