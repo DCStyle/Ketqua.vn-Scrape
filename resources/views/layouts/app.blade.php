@@ -58,7 +58,7 @@
 <div class="bg-color"></div>
 <div class="sidebar-overlay d-none" id="sidebar-overlay"></div>
 
-@include('partials.header')
+@include('partials.header', ['title' => isset($metadata) ? $metadata['title'] : $customTitle ?? setting('site_name')])
 <main class="container max-w-1140px position-relative">
     @yield('content')
 </main>

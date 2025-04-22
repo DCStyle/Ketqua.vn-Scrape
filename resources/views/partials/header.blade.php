@@ -9,7 +9,9 @@
             <div class="divider"></div>
             <div class="title">
                 <div class="underline">
-                    <h1 class="line-clamp-1">XSMB - Kết Quả Xổ Số Miền Bắc - SXMB Hôm Nay - KQXSMB</h1>
+                    <h1 class="line-clamp-1">
+                        {{ $title ?: 'XSMB - Kết Quả Xổ Số Miền Bắc - SXMB Hôm Nay - KQXSMB' }}
+                    </h1>
                 </div>
             </div>
             <div class="today">
