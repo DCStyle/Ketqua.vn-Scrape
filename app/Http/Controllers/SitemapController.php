@@ -66,17 +66,11 @@ class SitemapController extends Controller
         $sourceDomain = config('url_mappings.source_domain');
         $urlsToReplace = [
             $sourceDomain,
-            'https://ketqua.vn'
+            'ketqua.vn'
         ];
 
-        $newUrl = str_replace($urlsToReplace, request()->getHost(), $item->url);
-        if (!str_starts_with('https://', $newUrl))
-        {
-            $newUrl = 'https://' . $newUrl;
-        }
-
         return [
-            'loc' => $newUrl,
+            'loc' => str_replace($urlsToReplace, request()->getHost(), $item->url),
             'lastmod' => Carbon::parse($item->last_modified)
                 ->setTimezone('Asia/Ho_Chi_Minh')
                 ->toW3cString(),
@@ -90,17 +84,11 @@ class SitemapController extends Controller
         $sourceDomain = config('url_mappings.source_domain');
         $urlsToReplace = [
             $sourceDomain,
-            'https://ketqua.vn'
+            'ketqua.vn'
         ];
 
-        $newUrl = str_replace($urlsToReplace, request()->getHost(), $item->url);
-        if (!str_starts_with('https://', $newUrl))
-        {
-            $newUrl = 'https://' . $newUrl;
-        }
-
         return [
-            'loc' => $newUrl,
+            'loc' => str_replace($urlsToReplace, request()->getHost(), $item->url),
             'lastmod' => Carbon::parse($item->last_modified)
                 ->setTimezone('Asia/Ho_Chi_Minh')
                 ->toW3cString()
