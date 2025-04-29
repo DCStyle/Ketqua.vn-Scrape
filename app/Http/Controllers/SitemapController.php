@@ -69,8 +69,14 @@ class SitemapController extends Controller
             'https://ketqua.vn'
         ];
 
+        $newUrl = str_replace($urlsToReplace, request()->getHost(), $item->url);
+        if (!str_starts_with('https://', $newUrl))
+        {
+            $newUrl = 'https://' . $newUrl;
+        }
+
         return [
-            'loc' => str_replace($urlsToReplace, request()->getHost(), $item->url),
+            'loc' => $newUrl,
             'lastmod' => Carbon::parse($item->last_modified)
                 ->setTimezone('Asia/Ho_Chi_Minh')
                 ->toW3cString(),
@@ -87,8 +93,14 @@ class SitemapController extends Controller
             'https://ketqua.vn'
         ];
 
+        $newUrl = str_replace($urlsToReplace, request()->getHost(), $item->url);
+        if (!str_starts_with('https://', $newUrl))
+        {
+            $newUrl = 'https://' . $newUrl;
+        }
+
         return [
-            'loc' => str_replace($urlsToReplace, request()->getHost(), $item->url),
+            'loc' => $newUrl,
             'lastmod' => Carbon::parse($item->last_modified)
                 ->setTimezone('Asia/Ho_Chi_Minh')
                 ->toW3cString()
