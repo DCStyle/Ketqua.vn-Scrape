@@ -25,9 +25,6 @@ class SitemapController extends Controller
             $path .= '.xml';
         }
 
-        $config = config('url_mappings');
-        $sourceDomain = $config['source_domain'];
-
         if ($path === 'results.xml') {
             $urls = DB::table('sitemaps')
                 ->where('parent_path', 'results.xml')
@@ -67,8 +64,13 @@ class SitemapController extends Controller
     private function formatUrl($item)
     {
         $sourceDomain = config('url_mappings.source_domain');
+        $urlsToReplace = [
+            $sourceDomain,
+            'https://ketqua.vn'
+        ];
+
         return [
-            'loc' => str_replace($sourceDomain, request()->getHost(), $item->url),
+            'loc' => str_replace($urlsToReplace, request()->getHost(), $item->url),
             'lastmod' => Carbon::parse($item->last_modified)
                 ->setTimezone('Asia/Ho_Chi_Minh')
                 ->toW3cString(),
@@ -80,8 +82,13 @@ class SitemapController extends Controller
     private function formatSitemapUrl($item)
     {
         $sourceDomain = config('url_mappings.source_domain');
+        $urlsToReplace = [
+            $sourceDomain,
+            'https://ketqua.vn'
+        ];
+
         return [
-            'loc' => str_replace($sourceDomain, request()->getHost(), $item->url),
+            'loc' => str_replace($urlsToReplace, request()->getHost(), $item->url),
             'lastmod' => Carbon::parse($item->last_modified)
                 ->setTimezone('Asia/Ho_Chi_Minh')
                 ->toW3cString()
